@@ -1,3 +1,4 @@
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, Tabs } from "@mantine/core";
 import { FaPlus } from "react-icons/fa6";
 import { RiPlayListAddFill } from "react-icons/ri";
@@ -33,7 +34,6 @@ export default function PlaylistTabs(props) {
               </Tabs.Tab>
             ))}
         </Tabs.List>
-
         {playlists &&
           playlists.length > 0 &&
           playlists?.map((playlist, i) => (
@@ -56,7 +56,7 @@ export default function PlaylistTabs(props) {
                   </button>
                 </div>
               </div>
-              <div className="h-fit">
+              <div className="h-[300px] overflow-auto">
                 <Table
                   stickyHeader
                   highlightOnHover

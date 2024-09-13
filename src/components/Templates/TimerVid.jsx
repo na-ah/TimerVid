@@ -13,24 +13,20 @@ export default function TimerVid() {
   return (
     <>
       <MantineProvider>
-        <div className="min-h-dvh">
+        <div className="min-h-dvh min-w-[240px] sm:w-[480px] md:w-[768px] xl:w-[1280px] mx-auto">
           <Header setIsShowTutorial={setIsShowTutorial} />
-          <section className="mx-auto w-fit">
-            <div className="w-[480px] md:w-[768px] xl:w-[1280px] flex flex-col gap-3 px-5">
-              <TutorialContainer
-                isShowTutorial={isShowTutorial}
-                setIsShowTutorial={setIsShowTutorial}
-              />
-              <PlaylistProvider>
-                <TimerProvider>
-                  <TimersWithControllerContainer />
-                </TimerProvider>
-                <PlaylistContainer>
-                  <PlayerContainer />
-                </PlaylistContainer>
-              </PlaylistProvider>
-            </div>
-          </section>
+          <TutorialContainer
+            isShowTutorial={isShowTutorial}
+            setIsShowTutorial={setIsShowTutorial}
+          />
+          <PlaylistProvider>
+            <TimerProvider>
+              <TimersWithControllerContainer />
+            </TimerProvider>
+            <PlaylistContainer>
+              <PlayerContainer />
+            </PlaylistContainer>
+          </PlaylistProvider>
         </div>
       </MantineProvider>
     </>

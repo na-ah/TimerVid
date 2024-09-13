@@ -41,30 +41,32 @@ export default function TutorialContainer({
     <>
       {isShowTutorial && (
         <>
-          <Carousel>
-            <CarouselContent>
-              <CarouselItem>
-                <Tutorial1 />
-              </CarouselItem>
-              <CarouselItem>
-                <Tutorial2 />
-              </CarouselItem>
-              <CarouselItem>
-                <Tutorial3 />
-              </CarouselItem>
-              <CarouselItem>
-                <Tutorial4 />
-              </CarouselItem>
-              <CarouselItem>
-                <Tutorial5 />
-              </CarouselItem>
-              <CarouselItem>
-                <Tutorial6 setIsShowTutorial={setIsShowTutorial} />
-              </CarouselItem>
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+          <div className="w-[80%] mx-auto px-3">
+            <Carousel>
+              <CarouselContent>
+                <CarouselItem>
+                  <Tutorial1 />
+                </CarouselItem>
+                <CarouselItem>
+                  <Tutorial2 />
+                </CarouselItem>
+                <CarouselItem>
+                  <Tutorial3 />
+                </CarouselItem>
+                <CarouselItem>
+                  <Tutorial4 />
+                </CarouselItem>
+                <CarouselItem>
+                  <Tutorial5 />
+                </CarouselItem>
+                <CarouselItem>
+                  <Tutorial6 setIsShowTutorial={setIsShowTutorial} />
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
         </>
       )}
     </>
