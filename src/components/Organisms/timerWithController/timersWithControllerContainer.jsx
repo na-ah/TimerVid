@@ -13,6 +13,7 @@ export default function TimersWithControllerContainer() {
   const { controller } = usePlayer();
   const { resetStatus } = useContext(PlaylistContext);
   const {
+    currentTimer,
     workTimer,
     breakTimer,
     longBreakTimer,
@@ -115,7 +116,6 @@ export default function TimersWithControllerContainer() {
           color="grape"
           onClick={() => {
             startTimer();
-            controller({ type: "play/pause" });
           }}
         >
           play / pause

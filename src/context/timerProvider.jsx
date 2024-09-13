@@ -5,11 +5,13 @@ import useSound from "use-sound";
 import countdownSfx from "../assets/countdown.mp3";
 import { useAtomValue } from "jotai";
 import { playerAtom } from "../atoms/atoms";
+import usePlayer from "@/hooks/usePlayer";
 
 export const TimerContext = createContext();
 
 export default function TimerProvider({ children }) {
   const player = useAtomValue(playerAtom);
+  const { controller } = usePlayer();
   const workTimer = useTimer(1500, "work");
   const breakTimer = useTimer(300, "break");
   const longBreakTimer = useTimer(600, "long");
@@ -125,12 +127,15 @@ export default function TimerProvider({ children }) {
   }, [workTimer.isRunning, breakTimer.isRunning, longBreakTimer.isRunning]);
 
   const startTimer = () => {
+    const timer = currentTimer || workTimer;
     if (!currentTimer) {
       setCurrentTimer(workTimer);
-      workTimer.setIsRunning((prev) => !prev);
-    } else {
-      currentTimer.setIsRunning((prev) => !prev);
     }
+
+    timer.setIsRunning((prev) => {
+      controller({ type: prev ? "pause" : "play" });
+      return !prev;
+    });
   };
 
   const clearTimer = () => {
