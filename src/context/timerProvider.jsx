@@ -73,7 +73,7 @@ export default function TimerProvider({ children }) {
       resetTimer(workTimer);
       resetTimer(breakTimer);
       resetTimer(longBreakTimer);
-      alert("fin");
+      alert("お疲れ様でした！これでまた一歩目標に近づきましたね！");
       return;
     }
     setLongBreakCycleCount((prev) => prev + 1);
