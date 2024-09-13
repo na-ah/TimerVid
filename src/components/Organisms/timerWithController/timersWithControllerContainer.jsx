@@ -109,6 +109,7 @@ export default function TimersWithControllerContainer() {
           />
         </div>
         <Button
+          id="tutorial1-1"
           fullWidth
           className="shadow-md my-3"
           color="grape"
@@ -136,6 +137,7 @@ export default function TimersWithControllerContainer() {
             <TbPlayerTrackPrevFilled /> Rewind
           </button>
           <button
+            id="tutorial4-1"
             className="flex justify-center items-center gap-1 shadow-md  rounded-md"
             onClick={skipTimer}
           >

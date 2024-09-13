@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ["class"],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -13,8 +14,16 @@ module.exports = {
       },
       fontFamily: {
         silkScreen: ["Silkscreen", "sans-serif"],
+        play: ["Play", "sans-serif"],
+        shareTechMono: ["Share Tech Mono", "monospace"],
+        lexendPeta: ["Lexend Peta", "sans-serif"],
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };

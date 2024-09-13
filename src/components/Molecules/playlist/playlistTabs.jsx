@@ -45,10 +45,13 @@ export default function PlaylistTabs(props) {
               <div className="flex justify-between">
                 <h1 className="text-2xl mt-3 mb-5">{activePlaylist}</h1>
                 <div className="mr-1 flex gap-3">
-                  <button onClick={openAddVideo}>
+                  <button
+                    id="tutorial3-1"
+                    onClick={openAddVideo}
+                  >
                     <FaPlus />
                   </button>
-                  <button>
+                  <button id="tutorial5-1">
                     <RiPlayListAddFill onClick={openAddVideoList} />
                   </button>
                 </div>

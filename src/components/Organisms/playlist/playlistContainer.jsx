@@ -43,23 +43,9 @@ export default function PlaylistContainer({ children }) {
           onChange={setSelectedPlaylist}
         >
           <Tabs.List>
-            <Tabs.Tab
-              onClick={() => {
-                setSelectedPlaylist("work");
-                setIsWorking(true);
-              }}
-              value="work"
-            >
-              work playlist
-            </Tabs.Tab>
-            <Tabs.Tab
-              value="break"
-              onClick={() => {
-                setSelectedPlaylist("break");
-                setIsWorking(false);
-              }}
-            >
-              break playlist
+            <Tabs.Tab value="work">work playlist</Tabs.Tab>
+            <Tabs.Tab value="break">
+              <span id="tutorial4-2">break playlist</span>
             </Tabs.Tab>
             <div className="ml-auto flex gap-3">
               <GoArrowSwitch
@@ -75,6 +61,7 @@ export default function PlaylistContainer({ children }) {
                 onClick={nextVideo}
               />
               <FaPlus
+                id="tutorial2-1"
                 className={`${"cursor-pointer"}`}
                 onClick={() => {
                   selectedPlaylist == "work"
