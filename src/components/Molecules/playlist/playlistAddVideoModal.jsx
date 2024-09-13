@@ -15,6 +15,7 @@ export default function PlaylistAddVideoModal(props) {
     extractVideoId,
     urlInput,
     setUrlInput,
+    setCurrentVideoId,
   } = props;
   return (
     <>
@@ -39,6 +40,7 @@ export default function PlaylistAddVideoModal(props) {
               lengthInput,
               activePlaylist
             );
+            setCurrentVideoId(idInput);
             setUrlInput("");
             setIdInput("");
             setLengthInput("");
