@@ -14,7 +14,7 @@ export default function TimerVid() {
   return (
     <>
       <MantineProvider>
-        <div className="min-h-dvh min-w-[240px] sm:w-[480px] md:w-[768px] xl:w-[1280px] mx-auto">
+        <div className="min-h-dvh min-w-[240px] w-full sm:w-[640px] md:w-[768px] xl:w-[1280px] mx-auto">
           <Toaster />
           <Header setIsShowTutorial={setIsShowTutorial} />
           <TutorialContainer
