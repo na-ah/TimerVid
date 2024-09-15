@@ -21,7 +21,7 @@ export default function Tutorial4() {
       <JoyrideWrapper
         steps={steps}
         title={"休憩時プレイリストの使い方"}
-        progress={"1/2"}
+        progress={"4/6"}
         content={
           "TimerVidでは、作業中と休憩で別のプレイリストを使用します。次は休憩時プレイリストを作成してみましょう！\n\n今回は一気に動画登録まで進むので、休憩用の動画のURLまたはID（例：EtqP2xVE4iY）をコピーしておいてください。\n"
         }

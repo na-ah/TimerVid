@@ -13,7 +13,7 @@ export default function Tutorial5() {
       <JoyrideWrapper
         steps={steps}
         title={"再生リストをまとめて登録しよう"}
-        progress={"1/2"}
+        progress={"5/6"}
         content={
           "お疲れさまでした！\n基本的なTimerVidの使い方を学ぶことができました！\n\n最後に、Youtubeの再生リストを一気に登録する方法を学びましょう。再生リストのURLまたは、再生リストID（例：PLU1XqNAUBP5Vp2fOpaUV3aYa6XwfkL73f）をコピーしておいてください。もう一度skipを押して、workタイマーに移動してから次のボタンを押してください。"
         }

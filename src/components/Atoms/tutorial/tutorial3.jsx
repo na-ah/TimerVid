@@ -14,7 +14,7 @@ export default function Tutorial3() {
       <JoyrideWrapper
         steps={steps}
         title={"プレイリストに動画を追加しよう"}
-        progress={"2/2"}
+        progress={"3/6"}
         content={`Good！プレイリストが作成できました！\n\n次はプレイリストに好きな動画を登録してみましょう。\nYoutubeから動画のURLまたは、動画ID（例：HT6q8GqDHPA）をコピーしておいてください。`}
         buttonLabel={"③ 動画の追加方法を知る"}
       />

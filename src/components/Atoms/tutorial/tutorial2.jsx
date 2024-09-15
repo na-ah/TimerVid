@@ -18,7 +18,7 @@ export default function Tutorial2() {
       <JoyrideWrapper
         steps={steps}
         title={"プレイリストを作成しよう"}
-        progress={"2/2"}
+        progress={"2/6"}
         content={`おめでとうございます！\n\n無事に動画とタイマーが動きました！\n次は自分の好きな動画を登録する方法を学びましょう。`}
         buttonLabel={"② プレイリストの作成方法を知る"}
       />
