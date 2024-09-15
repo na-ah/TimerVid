@@ -20,7 +20,7 @@ export default function TimerProvider({ children }) {
   const [currentTimer, setCurrentTimer] = useState(null);
   const [longBreakCycle, setLongBreakCycle] = useState(4);
   const [longBreakCycleCount, setLongBreakCycleCount] = useState(1);
-  const [totalCycle, setTotalCycle] = useState(9);
+  const [totalCycle, setTotalCycle] = useState(4);
   const [totalCycleCount, setTotalCycleCount] = useState(1);
   const countdownSoundDelay = 5000;
   const [countdownSound] = useSound(countdownSfx, { volume: 4.0 });
