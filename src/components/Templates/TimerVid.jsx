@@ -7,6 +7,7 @@ import PlaylistContainer from "../Organisms/playlist/playlistContainer";
 import PlayerContainer from "../Organisms/player/playerContainer";
 import TutorialContainer from "../Organisms/tutorial/tutorialContainer";
 import { useState } from "react";
+import { Toaster } from "../ui/toaster";
 
 export default function TimerVid() {
   const [isShowTutorial, setIsShowTutorial] = useState(true);
@@ -14,6 +15,7 @@ export default function TimerVid() {
     <>
       <MantineProvider>
         <div className="min-h-dvh min-w-[240px] sm:w-[480px] md:w-[768px] xl:w-[1280px] mx-auto">
+          <Toaster />
           <Header setIsShowTutorial={setIsShowTutorial} />
           <TutorialContainer
             isShowTutorial={isShowTutorial}

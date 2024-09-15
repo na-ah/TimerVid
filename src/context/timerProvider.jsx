@@ -3,9 +3,11 @@ import useTimer from "../hooks/useTimer";
 import { PlaylistContext } from "./playlistProvider";
 import useSound from "use-sound";
 import countdownSfx from "../assets/countdown.mp3";
+import fanfareSfx from "../assets/fanfare.mp3";
 import { useAtomValue } from "jotai";
 import { playerAtom } from "../atoms/atoms";
 import usePlayer from "@/hooks/usePlayer";
+import { toast } from "@/hooks/use-toast";
 
 export const TimerContext = createContext();
 
@@ -20,8 +22,10 @@ export default function TimerProvider({ children }) {
   const [longBreakCycleCount, setLongBreakCycleCount] = useState(1);
   const [totalCycle, setTotalCycle] = useState(9);
   const [totalCycleCount, setTotalCycleCount] = useState(1);
-  const timerSwitchDelay = 5000;
-  const [play] = useSound(countdownSfx, { volume: 4.0 });
+  const countdownSoundDelay = 5000;
+  const [countdownSound] = useSound(countdownSfx, { volume: 4.0 });
+  const [fanfareSound] = useSound(fanfareSfx, { volume: 1.0 });
+
   let isFinished = false;
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -69,23 +73,38 @@ export default function TimerProvider({ children }) {
     await new Promise((resolve) => setTimeout(resolve, ms));
   };
 
+  const showCongratulations = () => {
+    toast({
+      title: "お疲れさまでした！",
+      description: "これでまた目標に一歩近づきましたね！",
+    });
+  };
+
   const handleBreakEnd = () => {
     if (totalCycleCount >= totalCycle) {
+      fanfareSound();
+      showCongratulations();
       isFinished = true;
       resetTimer(workTimer);
       resetTimer(breakTimer);
       resetTimer(longBreakTimer);
-      alert("お疲れ様でした！これでまた一歩目標に近づきましたね！");
+      setLongBreakCycleCount(1);
+      setTotalCycleCount(1);
+      setCurrentTimer(workTimer);
+      setTimeout(() => {
+        controller({ type: "pause" });
+      }, 100);
       return;
     }
+    console.log("test");
     setLongBreakCycleCount((prev) => prev + 1);
     setTotalCycleCount((prev) => prev + 1);
   };
 
   const handleTimerEnd = async (currentTimer, nextTimer) => {
     resetTimer(currentTimer);
-    play();
-    await wait(timerSwitchDelay);
+    countdownSound();
+    await wait(countdownSoundDelay);
     runNextTimer(nextTimer);
     switchStatus();
   };
@@ -101,18 +120,24 @@ export default function TimerProvider({ children }) {
 
   // breakTimerの終了時処理
   useEffect(() => {
-    if (breakTimer.remainingTime < 0) {
-      handleTimerEnd(breakTimer, workTimer);
-      handleBreakEnd();
-    }
+    const timerEnd = async () => {
+      if (breakTimer.remainingTime < 0) {
+        await handleTimerEnd(breakTimer, workTimer);
+        await handleBreakEnd();
+      }
+    };
+    timerEnd();
   }, [breakTimer.remainingTime]);
 
   // longBreakTimerの終了時処理
   useEffect(() => {
-    if (longBreakTimer.remainingTime < 0) {
-      handleTimerEnd(longBreakTimer, workTimer);
-      handleBreakEnd();
-    }
+    const timerEnd = async () => {
+      if (longBreakTimer.remainingTime < 0) {
+        await handleTimerEnd(longBreakTimer, workTimer);
+        await handleBreakEnd();
+      }
+    };
+    timerEnd();
   }, [longBreakTimer.remainingTime]);
 
   // currentTimerの設定処理
