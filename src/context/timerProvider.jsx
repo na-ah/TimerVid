@@ -92,11 +92,10 @@ export default function TimerProvider({ children }) {
       setTotalCycleCount(1);
       setCurrentTimer(workTimer);
       setTimeout(() => {
-        controller({ type: "pause" });
+        controller({ type: "stop" });
       }, 100);
       return;
     }
-    console.log("test");
     setLongBreakCycleCount((prev) => prev + 1);
     setTotalCycleCount((prev) => prev + 1);
   };

@@ -30,6 +30,10 @@ export default function usePlayer() {
           currentPlayer.pauseVideo();
         }
         return currentPlayer;
+      case "stop":
+        if (currentPlayer) {
+          currentPlayer.stopVideo();
+        }
       case "getTime":
         if (currentPlayer) {
           currentPlayer.getCurrentTime();
