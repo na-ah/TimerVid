@@ -174,7 +174,7 @@ export default function TimerProvider({ children }) {
   };
 
   const skipTimer = () => {
-    if (currentTimer) {
+    if (currentTimer && currentTimer.isRunning) {
       currentTimer.setElapsedTime(currentTimer.totalTime);
     }
   };
