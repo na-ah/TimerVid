@@ -14,10 +14,18 @@ export default function usePlayer() {
         return action.player;
       case "loadVideoId":
         if (currentPlayer) {
-          currentPlayer.loadVideoById({
-            videoId: currentVideoId,
-            startSeconds: resumeTime,
-          });
+          try {
+            currentPlayer.loadVideoById({
+              videoId: currentVideoId,
+              startSeconds: resumeTime,
+            });
+          } catch (error) {
+            currentPlayer.cueVideoById({
+              videoId: currentVideoId,
+              startSeconds: resumeTime,
+            });
+            currentPlayer.playVideo();
+          }
         }
         return currentPlayer;
       case "play":
@@ -68,9 +76,16 @@ export default function usePlayer() {
   const onReady = (e) => {
     setPlayer(e.target);
     controller({ type: "setPlayer", player: e.target });
-    e.target.loadVideoById({
-      videoId: currentVideoId,
-    });
+    try {
+      e.target.loadVideoById({
+        videoId: currentVideoId,
+      });
+    } catch (error) {
+      e.target.cueVideoById({
+        videoId: currentVideoId,
+      });
+      e.target.playVideo();
+    }
   };
 
   const onEnd = () => {
