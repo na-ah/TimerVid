@@ -90,6 +90,7 @@ export default function usePlayer() {
 
   const onEnd = () => {
     nextVideo();
+    controller({ type: "play" }); 
   };
 
   const opts = {
