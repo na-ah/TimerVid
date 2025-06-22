@@ -102,6 +102,8 @@ export default function usePlaylist(mode) {
       (playlist) => playlist.title === activePlaylist
     );
 
+    if (!playlist || playlist.videoIds.length === 0) return;
+
     const videoIdsLength = playlist.videoIds.length;
 
     setCurrentVideoIndex((prev) => {
@@ -109,8 +111,16 @@ export default function usePlaylist(mode) {
       const videoId = playlist.videoIds[newVideoIndex];
 
       if (videoIdsLength === 1) {
-        setCurrentVideoId(null);
-        setTimeout(() => setCurrentVideoId(videoId), 0);
+        setCurrentVideoId((prevId) => {
+          if (prevId === videoId) {
+            setCurrentVideoId("");
+            requestAnimationFrame(() => {
+              setCurrentVideoId(videoId);
+            });
+            return prevId;
+          }
+          return videoId;
+        });
       } else {
         setCurrentVideoId(videoId);
       }
@@ -302,6 +312,11 @@ export default function usePlaylist(mode) {
   };
 
   const getTitle = async (id) => {
+    if (!id || !process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY) {
+      console.warn("Missing video ID or API key");
+      return "Unknown Title";
+    }
+
     const config = {
       url: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API}/videos`,
       method: "GET",
@@ -315,11 +330,27 @@ export default function usePlaylist(mode) {
         key: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY}`,
       },
     };
-    const res = await axios(config);
-    return res.data.items[0].snippet.title;
+    
+    try {
+      const res = await axios(config);
+      if (res.data.items && res.data.items.length > 0) {
+        return res.data.items[0].snippet.title;
+      } else {
+        console.warn(`No video found for ID: ${id}`);
+        return "Video Not Found";
+      }
+    } catch (error) {
+      console.error(`Error fetching title for video ${id}:`, error.response?.status, error.message);
+      return "Error Loading Title";
+    }
   };
 
   const getLength = async (id) => {
+    if (!id || !process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY) {
+      console.warn("Missing video ID or API key");
+      return "0:00";
+    }
+
     const config = {
       url: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API}/videos`,
       method: "GET",
@@ -333,16 +364,27 @@ export default function usePlaylist(mode) {
         key: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY}`,
       },
     };
-    const res = await axios(config);
-    const duration = Duration.fromISO(
-      res.data.items[0].contentDetails.duration
-    );
+    
+    try {
+      const res = await axios(config);
+      if (res.data.items && res.data.items.length > 0) {
+        const duration = Duration.fromISO(
+          res.data.items[0].contentDetails.duration
+        );
 
-    if (duration.hours === 0) {
-      return duration.toFormat("m:ss");
+        if (duration.hours === 0) {
+          return duration.toFormat("m:ss");
+        }
+
+        return duration.toFormat("h:mm:ss");
+      } else {
+        console.warn(`No video found for ID: ${id}`);
+        return "0:00";
+      }
+    } catch (error) {
+      console.error(`Error fetching length for video ${id}:`, error.response?.status, error.message);
+      return "0:00";
     }
-
-    return duration.toFormat("h:mm:ss");
   };
 
   const addNewPlaylist = (newPlaylistName) => {
