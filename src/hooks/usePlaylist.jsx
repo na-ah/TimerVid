@@ -400,12 +400,30 @@ export default function usePlaylist(mode) {
   };
 
   const removePlaylist = () => {
-    const newPlaylist = playlists.filter(
-      (playlist) => playlist.title !== activePlaylist
-    );
-    setPlaylists(newPlaylist);
-    if (playlists.length > 1) {
-      setActivePlaylist(playlists.at(-2).title);
+    if (window.confirm(`プレイリスト「${activePlaylist}」を本当に削除してもよろしいですか？`)) {
+      const newPlaylist = playlists.filter(
+        (playlist) => playlist.title !== activePlaylist
+      );
+      setPlaylists(newPlaylist);
+      if (playlists.length > 1) {
+        setActivePlaylist(playlists.at(-2).title);
+      }
+    }
+  };
+
+  const removeVideoFromPlaylist = (videoIdToRemove, playlistTitle) => {
+    if (window.confirm("この動画をプレイリストから削除してもよろしいですか？")) {
+      setPlaylists((prevPlaylists) => {
+        return prevPlaylists.map((playlist) => {
+          if (playlist.title === playlistTitle) {
+            return {
+              ...playlist,
+              videoIds: playlist.videoIds.filter((id) => id !== videoIdToRemove),
+            };
+          }
+          return playlist;
+        });
+      });
     }
   };
 
@@ -449,6 +467,7 @@ export default function usePlaylist(mode) {
     extractPlaylistId,
     addNewPlaylist,
     removePlaylist,
+    removeVideoFromPlaylist,
     addPlaylistOpened,
     openAddPlaylist,
     closeAddPlaylist,

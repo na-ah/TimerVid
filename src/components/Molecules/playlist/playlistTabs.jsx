@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Table, Tabs } from "@mantine/core";
-import { FaPlus } from "react-icons/fa6";
+import { Table, Tabs, ActionIcon } from "@mantine/core";
+import { FaPlus, FaTrash } from "react-icons/fa6";
 import { RiPlayListAddFill } from "react-icons/ri";
 
 export default function PlaylistTabs(props) {
@@ -13,6 +13,7 @@ export default function PlaylistTabs(props) {
     openAddVideo,
     openAddVideoList,
     currentVideoIndex,
+    removeVideoFromPlaylist,
   } = props;
 
   return (
@@ -40,7 +41,7 @@ export default function PlaylistTabs(props) {
             <Tabs.Panel
               key={i}
               value={playlist.title}
-              className="ml-5"
+              className="ml-5 w-full"
             >
               <div className="flex justify-between">
                 <h1 className="text-2xl mt-3 mb-5">{activePlaylist}</h1>
@@ -66,6 +67,7 @@ export default function PlaylistTabs(props) {
                       <Table.Th className="text-center">#</Table.Th>
                       <Table.Th className="text-center"> title</Table.Th>
                       <Table.Th className="text-center">length</Table.Th>
+                      <Table.Th className="text-center"></Table.Th>
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
@@ -74,12 +76,14 @@ export default function PlaylistTabs(props) {
                         const video = videos.find(
                           (item) => item.id === videoId
                         );
+                        
+                        if (!video) return null;
 
                         return (
                           <Table.Tr
-                            key={video.id}
+                            key={`${video.id}-${index}`}
                             onClick={() => setCurrentVideoId(video.id)}
-                            className="cursor-pointer"
+                            className="cursor-pointer group"
                             style={{
                               background:
                                 currentVideoIndex === index
@@ -95,6 +99,22 @@ export default function PlaylistTabs(props) {
                             </Table.Td>
                             <Table.Td className="text-right">
                               {video.length}
+                            </Table.Td>
+                            <Table.Td className="text-center w-12">
+                              <ActionIcon
+                                color="red"
+                                variant="subtle"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (removeVideoFromPlaylist) {
+                                    removeVideoFromPlaylist(video.id, playlist.title);
+                                  }
+                                }}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                title="動画を削除"
+                              >
+                                <FaTrash size={14} />
+                              </ActionIcon>
                             </Table.Td>
                           </Table.Tr>
                         );
