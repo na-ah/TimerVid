@@ -8,8 +8,11 @@ import { Button, Progress } from "@mantine/core";
 import { IoMdSettings } from "react-icons/io";
 import usePlayer from "@/hooks/usePlayer";
 import { PlaylistContext } from "@/context/playlistProvider";
+import { useAtomValue } from "jotai";
+import { isTimerVisibleAtom } from "@/atoms/atoms";
 
 export default function TimersWithControllerContainer() {
+  const isTimerVisible = useAtomValue(isTimerVisibleAtom);
   const { controller } = usePlayer();
   const { resetStatus } = useContext(PlaylistContext);
   const {
@@ -51,6 +54,8 @@ export default function TimersWithControllerContainer() {
   const totalRequiredTime = useMemo(() => {
     return workTimerTotalTime + breakTimerTotalTime + longBreakTimerTotalTime;
   }, [workTimerTotalTime, breakTimerTotalTime, longBreakTimerTotalTime]);
+
+  if (!isTimerVisible) return null;
 
   return (
     <>
