@@ -1,5 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Table, Tabs, ActionIcon } from "@mantine/core";
+import { Table, Tabs, ActionIcon, Button, Group } from "@mantine/core";
 import { FaPlus, FaTrash } from "react-icons/fa6";
 import { RiPlayListAddFill } from "react-icons/ri";
 
@@ -14,7 +14,13 @@ export default function PlaylistTabs(props) {
     openAddVideoList,
     currentVideoIndex,
     removeVideoFromPlaylist,
+    removePlaylist,
+    isWorking,
+    tabMode,
   } = props;
+
+  // プレイリストが1つしかない場合は削除ボタンを隠す
+  const canDeletePlaylist = playlists && playlists.length > 1;
 
   return (
     <>
@@ -43,19 +49,46 @@ export default function PlaylistTabs(props) {
               value={playlist.title}
               className="ml-5 w-full"
             >
-              <div className="flex justify-between">
-                <h1 className="text-2xl mt-3 mb-5">{activePlaylist}</h1>
-                <div className="mr-1 flex gap-3">
-                  <button
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-3 mb-5 gap-3">
+                <Group spacing="sm" align="center">
+                  <h1 className="text-2xl font-bold m-0">{activePlaylist}</h1>
+                  {canDeletePlaylist && isWorking === (tabMode === "work") && (
+                    <ActionIcon
+                      color="red"
+                      variant="subtle"
+                      title="このプレイリストを削除"
+                      onClick={() => {
+                        if (removePlaylist) removePlaylist();
+                      }}
+                      className="mt-1"
+                    >
+                      <FaTrash size={16} />
+                    </ActionIcon>
+                  )}
+                </Group>
+                
+                <Group spacing="sm">
+                  <Button
                     id="tutorial3-1"
+                    variant="light"
+                    color="blue"
+                    size="sm"
+                    leftSection={<FaPlus />}
                     onClick={openAddVideo}
                   >
-                    <FaPlus />
-                  </button>
-                  <button id="tutorial5-1">
-                    <RiPlayListAddFill onClick={openAddVideoList} />
-                  </button>
-                </div>
+                    動画を追加
+                  </Button>
+                  <Button
+                    id="tutorial5-1"
+                    variant="light"
+                    color="indigo"
+                    size="sm"
+                    leftSection={<RiPlayListAddFill />}
+                    onClick={openAddVideoList}
+                  >
+                    一括追加
+                  </Button>
+                </Group>
               </div>
               <div className="h-[300px] overflow-auto">
                 <Table

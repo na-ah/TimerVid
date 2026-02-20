@@ -3,12 +3,12 @@ import PlaylistTabs from "../../Molecules/playlist/playlistTabs";
 import { PlaylistContext } from "../../../context/playlistProvider";
 import PlaylistInfo from "../../Molecules/playlist/playlistInfo";
 import PlaylistAddVideoModal from "../../Molecules/playlist/playlistAddVideoModal";
-import { Tabs } from "@mantine/core";
+import { Tabs, ActionIcon, Tooltip, Group, Button } from "@mantine/core";
 import { GoArrowSwitch } from "react-icons/go";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
 import { TbPlayerTrackPrevFilled } from "react-icons/tb";
 import PlaylistAddVideoListModal from "../../Molecules/playlist/playlistAddVideoListModal";
-import { FaMinus, FaPlus } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa6";
 import PlaylistAddModal from "../../Molecules/playlist/playlistAddModal";
 
 export default function PlaylistContainer({ children }) {
@@ -42,39 +42,43 @@ export default function PlaylistContainer({ children }) {
           value={selectedPlaylist}
           onChange={setSelectedPlaylist}
         >
-          <Tabs.List>
+          <Tabs.List className="flex items-center w-full">
             <Tabs.Tab value="work">work playlist</Tabs.Tab>
             <Tabs.Tab value="break">
               <span id="tutorial4-2">break playlist</span>
             </Tabs.Tab>
-            <div className="ml-auto flex gap-3">
-              <GoArrowSwitch
-                className="cursor-pointer"
-                onClick={switchStatus}
-              />
-              <TbPlayerTrackPrevFilled
-                className="cursor-pointer"
-                onClick={prevVideo}
-              />
-              <TbPlayerTrackNextFilled
-                className="cursor-pointer"
-                onClick={nextVideo}
-              />
-              <FaPlus
+            <div className="ml-auto flex items-center gap-4 px-2 pb-2">
+              <Group spacing="xs" className="hidden sm:flex">
+                <Tooltip label="作業/休憩を切り替え" position="bottom" withArrow>
+                  <ActionIcon variant="light" color="blue" onClick={switchStatus} size="lg">
+                    <GoArrowSwitch size={20} />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label="前の動画" position="bottom" withArrow>
+                  <ActionIcon variant="light" color="blue" onClick={prevVideo} size="lg">
+                    <TbPlayerTrackPrevFilled size={20} />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label="次の動画" position="bottom" withArrow>
+                  <ActionIcon variant="light" color="blue" onClick={nextVideo} size="lg">
+                    <TbPlayerTrackNextFilled size={20} />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
+              
+              <Button
                 id="tutorial2-1"
-                className={`${"cursor-pointer"}`}
+                leftSection={<FaPlus />}
+                variant="outline"
+                size="sm"
                 onClick={() => {
                   selectedPlaylist == "work"
                     ? workPlaylist.openAddPlaylist()
                     : breakPlaylist.openAddPlaylist();
                 }}
-              />
-              <FaMinus
-                className="cursor-pointer"
-                onClick={() => {
-                  removePlaylist();
-                }}
-              />
+              >
+                新規リスト
+              </Button>
             </div>
           </Tabs.List>
           <Tabs.Panel value="work">
@@ -82,7 +86,7 @@ export default function PlaylistContainer({ children }) {
               <PlaylistAddVideoListModal {...workPlaylist} />
               <PlaylistAddVideoModal {...workPlaylist} />
               <PlaylistAddModal {...workPlaylist} />
-              <PlaylistTabs {...workPlaylist} />
+              <PlaylistTabs {...workPlaylist} removePlaylist={removePlaylist} isWorking={isWorking} tabMode="work" />
             </div>
           </Tabs.Panel>
           <Tabs.Panel value="break">
@@ -90,7 +94,7 @@ export default function PlaylistContainer({ children }) {
               <PlaylistAddVideoListModal {...breakPlaylist} />
               <PlaylistAddVideoModal {...breakPlaylist} />
               <PlaylistAddModal {...breakPlaylist} />
-              <PlaylistTabs {...breakPlaylist} />
+              <PlaylistTabs {...breakPlaylist} removePlaylist={removePlaylist} isWorking={isWorking} tabMode="break" />
             </div>
           </Tabs.Panel>
         </Tabs>
