@@ -1,4 +1,4 @@
-import { useContext, useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import { PlaylistContext } from "../context/playlistProvider";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { playerAtom, resumeTimeAtom } from "../atoms/atoms";
@@ -8,6 +8,8 @@ export default function usePlayer() {
   const player = useAtomValue(playerAtom);
   const [resumeTime] = useAtom(resumeTimeAtom);
   const { currentVideoId, nextVideo } = useContext(PlaylistContext);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
   const reducer = (currentPlayer, action) => {
     switch (action.type) {
       case "setPlayer":
@@ -76,11 +78,14 @@ export default function usePlayer() {
   const onReady = (e) => {
     setPlayer(e.target);
     controller({ type: "setPlayer", player: e.target });
+    setIsPlayerReady(true);
+    setRetryCount(0);
     try {
       e.target.loadVideoById({
         videoId: currentVideoId,
       });
     } catch (error) {
+      console.warn("Failed to load video, trying cue method:", error);
       e.target.cueVideoById({
         videoId: currentVideoId,
       });
@@ -89,8 +94,48 @@ export default function usePlayer() {
   };
 
   const onEnd = () => {
+    setRetryCount(0);
     nextVideo();
-    controller({ type: "play" }); 
+    setTimeout(() => {
+      controller({ type: "play" });
+    }, 100);
+  };
+
+  const onError = (error) => {
+    console.warn("YouTube player error:", error.data);
+    
+    if (retryCount < 3) {
+      setRetryCount(prev => prev + 1);
+      setTimeout(() => {
+        if (player && currentVideoId) {
+          try {
+            player.loadVideoById({
+              videoId: currentVideoId,
+              startSeconds: resumeTime,
+            });
+          } catch (retryError) {
+            console.warn("Retry failed, skipping to next video:", retryError);
+            nextVideo();
+          }
+        }
+      }, 1000 * retryCount);
+    } else {
+      console.warn("Max retries reached, skipping to next video");
+      setRetryCount(0);
+      nextVideo();
+    }
+  };
+
+  const onStateChange = (event) => {
+    const state = event.data;
+    if (state === -1 && retryCount === 0) {
+      setTimeout(() => {
+        if (player && player.getPlayerState() === -1) {
+          console.warn("Video failed to start, attempting retry");
+          onError({ data: "UNSTARTED_TIMEOUT" });
+        }
+      }, 5000);
+    }
   };
 
   const opts = {
@@ -106,5 +151,8 @@ export default function usePlayer() {
     onReady,
     opts,
     onEnd,
+    onError,
+    onStateChange,
+    isPlayerReady,
   };
 }

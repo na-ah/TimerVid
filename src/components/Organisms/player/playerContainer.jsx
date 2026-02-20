@@ -2,7 +2,7 @@ import usePlayer from "../../../hooks/usePlayer";
 import Player from "../../Molecules/player/player";
 
 export default function PlayerContainer() {
-  const { opts, onReady, onEnd } = usePlayer();
+  const { opts, onReady, onEnd, onError, onStateChange } = usePlayer();
 
   return (
     <>
@@ -12,6 +12,8 @@ export default function PlayerContainer() {
             opts={opts}
             onReady={onReady}
             onEnd={onEnd}
+            onError={onError}
+            onStateChange={onStateChange}
           />
         </div>
       </div>
