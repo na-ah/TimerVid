@@ -1,4 +1,4 @@
-import { Button, Input, Modal } from "@mantine/core";
+import { Button, TextInput, Modal, Stack, Text, Group, Loader, ScrollArea, Badge } from "@mantine/core";
 
 export default function PlaylistAddVideoListModal(props) {
   const {
@@ -20,6 +20,11 @@ export default function PlaylistAddVideoListModal(props) {
     addVideoToPlaylist,
     activePlaylist,
   } = props;
+
+  const hasError = urlInput.length > 0 && !playlistInput;
+  const isLoading = Boolean(playlistInput && (!videoIdsInput || videoIdsInput.length === 0));
+  const isSubmitDisabled = !videoIdsInput || videoIdsInput.length === 0 || hasError;
+
   return (
     <>
       <Modal
@@ -33,17 +38,20 @@ export default function PlaylistAddVideoListModal(props) {
           setVideoLengthInput("");
           setPlaylistInput("");
         }}
-        title="addVideoList"
+        title={<span className="font-bold text-lg">YouTube再生リストから一括追加</span>}
         centered
+        size="lg"
+        overlayProps={{ blur: 3 }}
       >
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            if (isSubmitDisabled) return;
             videoIdsInput.forEach((videoId, index) => {
               addVideoToPlaylist(
                 videoId,
                 videoTitlesInput[index],
-                videoLengthInput[index],
+                videoLengthInput[index] || "不明",
                 activePlaylist
               );
             });
@@ -56,50 +64,61 @@ export default function PlaylistAddVideoListModal(props) {
             closeAddVideoList();
           }}
         >
-          <Input
-            data-autofocus
-            placeholder="youtubeの再生リストのURLを入力してください"
-            value={urlInput}
-            onChange={(e) => {
-              setUrlInput(e.target.value);
-              extractPlaylistId(e.target.value) &&
-                setPlaylistInput(extractPlaylistId(e.target.value));
-            }}
-          />
-          <p>
-            {urlInput.length > 0 && playlistInput.length === 0
-              ? "再生リストが抽出できませんでした"
-              : "抽出成功: " + playlistInput}
-          </p>
-          {videoIdsInput && (
-            <>
-              {/* <p className="text-2xl">ids</p>
-              <ul>
-                {videoIdsInput?.map((videoId) => (
-                  <li key={videoId}>{videoId}</li>
-                ))}
-              </ul> */}
-              <p className="text-2xl mt-3 mb-2">titles</p>
-              <ul>
-                {videoTitlesInput.map((videoTitle, i) => (
-                  <li key={i}>{videoTitle}</li>
-                ))}
-              </ul>
-              {/* <p className="text-2xl">length</p>
-              {videoLengthInput?.map((videoLength) => (
-                <li key={videoLength}>{videoLength}</li>
-              ))} */}
+          <Stack spacing="sm">
+            <TextInput
+              data-autofocus
+              label="YouTube 再生リスト(Playlist) URL"
+              placeholder="https://www.youtube.com/playlist?list=..."
+              value={urlInput}
+              onChange={(e) => {
+                setUrlInput(e.target.value);
+                const extracted = extractPlaylistId(e.target.value);
+                if (extracted) {
+                  setPlaylistInput(extracted);
+                } else {
+                  setPlaylistInput("");
+                }
+              }}
+              error={hasError ? "有効なYouTube再生リストのURLを入力してください" : null}
+              description={playlistInput && !hasError ? `リストID: ${playlistInput}` : null}
+            />
 
-              {/* <p>videoIdsCount: {videoIdsInput.length}</p> */}
-              <p>totalVideoCount: {videoTotalCount}</p>
-            </>
-          )}
-          <Button
-            className="ml-auto block mt-3"
-            type="submit"
-          >
-            追加
-          </Button>
+            {isLoading && (
+              <Group position="center" mt="md">
+                <Loader size="sm" />
+                <Text size="sm" color="dimmed">再生リストの動画情報を取得中...</Text>
+              </Group>
+            )}
+
+            {videoIdsInput && videoIdsInput.length > 0 && !isLoading && (
+              <div className="bg-slate-50 p-4 rounded-md mt-2 border border-slate-200">
+                <Group position="apart" mb="sm">
+                  <Text size="sm" weight={600} color="dimmed">取得した動画</Text>
+                  <Badge color="blue">合計 {videoTotalCount} 件</Badge>
+                </Group>
+                
+                <ScrollArea h={200} type="always" offsetScrollbars>
+                  <Stack spacing="xs">
+                    {videoTitlesInput.map((videoTitle, i) => (
+                      <div key={i} className="flex gap-2 items-start border-b border-slate-100 pb-2">
+                        <Text size="xs" color="dimmed" className="w-6 flex-shrink-0 pt-0.5">{i + 1}.</Text>
+                        <Text size="sm" className="line-clamp-2">{videoTitle}</Text>
+                      </div>
+                    ))}
+                  </Stack>
+                </ScrollArea>
+              </div>
+            )}
+
+            <Button
+              className="ml-auto mt-2"
+              type="submit"
+              disabled={isSubmitDisabled}
+              loading={isLoading}
+            >
+              一括追加する
+            </Button>
+          </Stack>
         </form>
       </Modal>
     </>
