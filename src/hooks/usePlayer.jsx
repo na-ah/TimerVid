@@ -194,6 +194,7 @@ export default function usePlayer() {
     width: "100%",
     playerVars: {
       rel: 0,
+      playsinline: 1,
     },
   };
 
