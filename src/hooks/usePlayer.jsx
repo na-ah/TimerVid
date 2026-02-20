@@ -122,6 +122,19 @@ export default function usePlayer() {
   const onError = (error) => {
     console.warn("YouTube player error:", error.data);
     
+    // YouTube API Error Codes for unplayable videos:
+    // 100: Video not found (removed or private)
+    // 101, 150: Embedding disabled by video owner
+    if (error.data === 100 || error.data === 101 || error.data === 150) {
+      console.warn("Video unavailable. Skipping to next video immediately.");
+      setRetryCount(0);
+      nextVideo();
+      setTimeout(() => {
+        controller({ type: "play" });
+      }, 100);
+      return;
+    }
+
     if (retryCount < 3) {
       setRetryCount(prev => prev + 1);
       setTimeout(() => {
@@ -134,6 +147,9 @@ export default function usePlayer() {
           } catch (retryError) {
             console.warn("Retry failed, skipping to next video:", retryError);
             nextVideo();
+            setTimeout(() => {
+              controller({ type: "play" });
+            }, 100);
           }
         }
       }, 1000 * retryCount);
@@ -141,6 +157,9 @@ export default function usePlayer() {
       console.warn("Max retries reached, skipping to next video");
       setRetryCount(0);
       nextVideo();
+      setTimeout(() => {
+        controller({ type: "play" });
+      }, 100);
     }
   };
 
