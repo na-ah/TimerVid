@@ -96,13 +96,7 @@ export default function PlaylistTabs(props) {
                     </Button>
                   </Group>
                 </div>
-              ) : (
-                <div className="mb-2 mt-1 flex-shrink-0">
-                  <h3 className="font-bold text-lg truncate text-zinc-700 dark:text-zinc-300">
-                    {activePlaylist}
-                  </h3>
-                </div>
-              )}
+              ) : null}
 
               <div className={`${isMinimal ? "flex-1 h-full" : "h-[300px]"} overflow-auto`}>
                 <Table
@@ -110,14 +104,16 @@ export default function PlaylistTabs(props) {
                   highlightOnHover
                   striped={isMinimal}
                 >
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th className="text-center w-8">#</Table.Th>
-                      <Table.Th className="text-left">title</Table.Th>
-                      {!isMinimal && <Table.Th className="text-right w-16">len</Table.Th>}
-                      {!isMinimal && <Table.Th className="text-center w-8"></Table.Th>}
-                    </Table.Tr>
-                  </Table.Thead>
+                  {!isMinimal && (
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th className="text-center w-8">#</Table.Th>
+                        <Table.Th className="text-left">title</Table.Th>
+                        <Table.Th className="text-right w-16">len</Table.Th>
+                        <Table.Th className="text-center w-8"></Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                  )}
                   <Table.Tbody>
                     {videos.length > 0 &&
                       playlist.videoIds.map((videoId, index) => {

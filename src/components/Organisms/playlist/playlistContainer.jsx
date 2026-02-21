@@ -38,7 +38,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
               variant={activeContext.activePlaylist === pl.title ? "filled" : "light"} 
               onClick={() => { activeContext.setActivePlaylist(pl.title); close(); }}
               fullWidth
-              className="justify-start h-auto py-3"
+              className="justify-start h-auto py-3 flex-shrink-0 min-h-[60px]"
             >
               <div className="flex flex-col items-start truncate w-full">
                 <span className="font-bold text-sm truncate w-full text-left">{pl.title}</span>

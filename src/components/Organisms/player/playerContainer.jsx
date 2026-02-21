@@ -45,36 +45,36 @@ export default function PlayerContainer({ isCinemaMode }) {
         </div>
 
         {/* Control Bar */}
-        <div className={`flex flex-col bg-zinc-800/90 backdrop-blur border-t border-white/5 relative z-10 ${isCinemaMode ? "pb-2" : "pb-1"}`}>
+        <div className={`flex flex-col bg-zinc-800/90 backdrop-blur border-t border-white/5 relative z-10 ${isCinemaMode ? "rounded-b-xl pb-1" : "pb-1"}`}>
           
           {/* Row 1: Main Controls (Center) */}
-          <div className={`flex items-center justify-center ${isCinemaMode ? "gap-10 py-3" : "gap-4 py-2"}`}>
+          <div className={`flex items-center justify-center ${isCinemaMode ? "gap-6 py-2" : "gap-4 py-2"}`}>
             <button 
               onClick={prevVideo}
-              className={`text-zinc-400 hover:text-white transition-colors hover:bg-white/10 rounded-full active:scale-95 ${isCinemaMode ? "p-4" : "p-2"}`}
+              className={`text-zinc-400 hover:text-white transition-colors hover:bg-white/10 rounded-full active:scale-95 ${isCinemaMode ? "p-3" : "p-2"}`}
               aria-label="Previous Video"
             >
-              <FaBackwardStep size={isCinemaMode ? 24 : 16} />
+              <FaBackwardStep size={isCinemaMode ? 20 : 16} />
             </button>
 
             <button
               onClick={() => controller({ type: "play/pause" })}
-              className={`group relative flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-105 active:scale-95 transition-all duration-300 ${isCinemaMode ? "w-16 h-16" : "w-10 h-10"}`}
+              className={`group relative flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-105 active:scale-95 transition-all duration-300 ${isCinemaMode ? "w-12 h-12" : "w-10 h-10"}`}
               aria-label={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
-                <FaPause size={isCinemaMode ? 28 : 16} className="text-white" />
+                <FaPause size={isCinemaMode ? 20 : 16} className="text-white" />
               ) : (
-                <FaPlay size={isCinemaMode ? 28 : 16} className="text-white ml-1" />
+                <FaPlay size={isCinemaMode ? 20 : 16} className="text-white ml-1" />
               )}
             </button>
 
             <button 
               onClick={nextVideo}
-              className={`text-zinc-400 hover:text-white transition-colors hover:bg-white/10 rounded-full active:scale-95 ${isCinemaMode ? "p-4" : "p-2"}`}
+              className={`text-zinc-400 hover:text-white transition-colors hover:bg-white/10 rounded-full active:scale-95 ${isCinemaMode ? "p-3" : "p-2"}`}
               aria-label="Next Video"
             >
-              <FaForwardStep size={isCinemaMode ? 24 : 16} />
+              <FaForwardStep size={isCinemaMode ? 20 : 16} />
             </button>
           </div>
 
@@ -95,7 +95,7 @@ export default function PlayerContainer({ isCinemaMode }) {
                 max="100"
                 value={isMuted ? 0 : volume}
                 onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
-                className={`w-full bg-zinc-600 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 touch-pan-y ${isCinemaMode ? "h-2" : "h-1"}`}
+                className={`w-full bg-zinc-600 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 touch-pan-y ${isCinemaMode ? "h-1.5" : "h-1"}`}
                 style={{
                   WebkitAppearance: "none", 
                 }}
