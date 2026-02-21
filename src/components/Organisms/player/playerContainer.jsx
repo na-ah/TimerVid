@@ -22,9 +22,9 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
   // Cinema Mode Layout (Existing)
   if (isCinemaMode) {
     return (
-      <div className="w-full flex flex-col rounded-xl overflow-hidden shadow-2xl bg-zinc-900">
-        <div className={`relative w-full bg-black aspect-video group max-h-[calc(100vh-250px)]`}>
-          <div className="flex justify-center w-full h-full">
+      <div className="w-full flex flex-col rounded-2xl overflow-hidden shadow-2xl bg-[#0f1115] border border-white/5 h-full">
+        <div className={`relative w-full bg-black aspect-video group max-h-[calc(100vh-280px)] overflow-hidden`}>
+          <div className="flex justify-center w-full h-full transform transition-transform duration-700 group-hover:scale-[1.01]">
             <Player
               opts={opts}
               onReady={onReady}
@@ -36,66 +36,83 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
           
           {!isPlaying && (
             <div 
-              className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer backdrop-blur-sm transition-opacity opacity-100 hover:bg-black/40"
+              className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer backdrop-blur-sm transition-all duration-500 opacity-100 hover:bg-black/30"
               onClick={() => controller({ type: "play" })}
             >
-              <div className="bg-white/20 rounded-full backdrop-blur-md border border-white/50 shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-110 transition-transform duration-300 p-6">
-                <FaPlay size={48} className="text-white ml-1" />
+              <div className="bg-white/10 rounded-full backdrop-blur-xl border border-white/20 shadow-[0_0_50px_rgba(99,102,241,0.2)] hover:scale-110 hover:bg-white/20 transition-all duration-300 p-8">
+                <FaPlay size={48} className="text-white ml-1 drop-shadow-lg" />
               </div>
+            </div>
+          )}
+
+          {/* Title Overlay in Player (Top Left) */}
+          {isPlaying && (
+            <div className="absolute top-0 left-0 right-0 p-8 bg-gradient-to-b from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <h2 className="text-xl font-medium text-white/90 truncate drop-shadow-md">
+                {currentTitle}
+              </h2>
             </div>
           )}
         </div>
 
-        <div className="flex flex-col bg-zinc-800/90 backdrop-blur border-t border-white/5 relative z-10 rounded-b-xl pb-1">
-          <div className="flex items-center justify-center gap-6 py-2">
-            <button 
-              onClick={prevVideo}
-              className="text-zinc-400 hover:text-white transition-colors hover:bg-white/10 rounded-full active:scale-95 p-3"
-              aria-label="Previous Video"
-            >
-              <FaBackwardStep size={20} />
-            </button>
+        <div className="flex-1 flex flex-col bg-[#16191e]/80 backdrop-blur-xl border-t border-white/5 relative z-10 p-4">
+          <div className="flex items-center justify-between gap-6 mb-2">
+            <div className="flex-1 hidden md:block">
+               <span className="text-xs text-zinc-500 font-medium uppercase tracking-wider block mb-1">Now Playing</span>
+               <h3 className="text-sm font-semibold text-zinc-200 truncate max-w-xs">{currentTitle}</h3>
+            </div>
 
-            <button
-              onClick={() => controller({ type: "play/pause" })}
-              className="group relative flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-105 active:scale-95 transition-all duration-300 w-12 h-12"
-              aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              {isPlaying ? (
-                <FaPause size={20} className="text-white" />
-              ) : (
-                <FaPlay size={20} className="text-white ml-1" />
-              )}
-            </button>
+            <div className="flex items-center gap-4 flex-1 justify-center">
+              <button 
+                onClick={prevVideo}
+                className="text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-full p-3 group"
+                aria-label="Previous Video"
+              >
+                <FaBackwardStep size={18} className="group-active:scale-90 transition-transform" />
+              </button>
 
-            <button 
-              onClick={nextVideo}
-              className="text-zinc-400 hover:text-white transition-colors hover:bg-white/10 rounded-full active:scale-95 p-3"
-              aria-label="Next Video"
-            >
-              <FaForwardStep size={20} />
-            </button>
-          </div>
+              <button
+                onClick={() => controller({ type: "play/pause" })}
+                className="group relative flex items-center justify-center bg-indigo-600 rounded-full shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 w-14 h-14"
+                aria-label={isPlaying ? "Pause" : "Play"}
+              >
+                <div className="absolute inset-0 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                {isPlaying ? (
+                  <FaPause size={22} className="text-white" />
+                ) : (
+                  <FaPlay size={22} className="text-white ml-1" />
+                )}
+              </button>
 
-          <div className="flex items-center w-full gap-4 px-6 pb-2">
-            <button
-              onClick={() => controller({ type: "toggleMute" })}
-              className="text-zinc-400 hover:text-white transition-colors rounded-full hover:bg-white/10 p-2"
-              aria-label={isMuted ? "Unmute" : "Mute"}
-            >
-              {getVolumeIcon(20)}
-            </button>
-            
-            <div className="relative flex-1 flex items-center h-full">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={isMuted ? 0 : volume}
-                onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
-                className="w-full bg-zinc-600 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 touch-pan-y h-1.5"
-                style={{ WebkitAppearance: "none" }}
-              />
+              <button 
+                onClick={nextVideo}
+                className="text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-full p-3 group"
+                aria-label="Next Video"
+              >
+                <FaForwardStep size={18} className="group-active:scale-90 transition-transform" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3 flex-1 justify-end">
+              <button
+                onClick={() => controller({ type: "toggleMute" })}
+                className="text-zinc-400 hover:text-white transition-all rounded-full hover:bg-white/5 p-2"
+                aria-label={isMuted ? "Unmute" : "Mute"}
+              >
+                {getVolumeIcon(18)}
+              </button>
+              
+              <div className="relative w-24 lg:w-32 flex items-center h-full">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={isMuted ? 0 : volume}
+                  onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
+                  className="w-full h-1.5 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 transition-all"
+                  style={{ WebkitAppearance: "none" }}
+                />
+              </div>
             </div>
           </div>
         </div>

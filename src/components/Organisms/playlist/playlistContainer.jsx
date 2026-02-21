@@ -49,30 +49,35 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
         </div>
       </Modal>
 
-      <div className={`flex flex-col w-full transition-all duration-300 ${isCinemaMode ? "h-[calc(100dvh-20px)]" : ""}`}>
+      <div className={`flex flex-col w-full transition-all duration-500 ${isCinemaMode ? "h-[calc(100dvh-40px)]" : ""}`}>
         
         {/* Cinema Mode Header */}
         {isCinemaMode && (
-          <div className="flex items-center justify-between mb-4 w-full px-2 flex-shrink-0">
+          <div className="flex items-center justify-between mb-6 w-full px-2 flex-shrink-0">
             <Button 
-              leftSection={<FaCompress />} 
-              variant="light" 
+              leftSection={<FaCompress size={14} />} 
+              variant="subtle" 
               color="gray" 
               onClick={() => setIsCinemaMode(false)}
+              className="text-zinc-400 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg px-4"
             >
               通常モードへ戻る
             </Button>
             
-            <div className="flex items-center gap-3">
-              <span className="font-bold text-lg hidden sm:inline-block max-w-[200px] truncate">
-                {activeContext.activePlaylist}
-              </span>
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end mr-2">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Now Playing</span>
+                <span className="font-bold text-lg text-zinc-100 hidden sm:inline-block max-w-[240px] truncate">
+                  {activeContext.activePlaylist}
+                </span>
+              </div>
               <Button 
-                leftSection={<FaList />} 
+                leftSection={<FaList size={14} />} 
                 variant="filled" 
                 color="indigo" 
                 onClick={open}
-                size="sm"
+                size="md"
+                className="shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-300 rounded-lg"
               >
                 リスト選択
               </Button>
@@ -80,15 +85,19 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
           </div>
         )}
 
-        <div className={`flex w-full items-start flex-1 overflow-hidden transition-all duration-500 ease-in-out ${isCinemaMode ? "flex-col md:flex-row gap-6" : "flex-col gap-4"}`}>
+        <div className={`flex w-full items-start flex-1 overflow-hidden transition-all duration-700 ease-in-out ${isCinemaMode ? "flex-col lg:flex-row gap-8" : "flex-col gap-4"}`}>
           {/* Left Column: Player & Current Info */}
           <div
             className={`flex flex-col w-full transition-all duration-500 ease-in-out ${
-              isCinemaMode ? "h-full md:w-[70%]" : "shrink-0"
+              isCinemaMode ? "h-full lg:w-[72%]" : "shrink-0"
             }`}
           >
             {/* Player Container */}
-            <div className={`w-full shadow-lg rounded-xl overflow-hidden flex-shrink-0 ${isCinemaMode ? "h-full flex flex-col" : ""}`}>
+            <div className={`w-full overflow-hidden flex-shrink-0 ${
+              isCinemaMode 
+                ? "h-full flex flex-col rounded-2xl shadow-2xl shadow-black/50" 
+                : "rounded-xl shadow-lg"
+            }`}>
               {children}
             </div>
           </div>
@@ -96,16 +105,21 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
           {/* Right Column: Playlist Selection */}
           <div
             className={`w-full flex flex-col transition-all duration-500 ease-in-out ${
-              isCinemaMode ? "h-full md:w-[30%]" : "flex-1 overflow-hidden"
+              isCinemaMode ? "h-full lg:w-[28%]" : "flex-1 overflow-hidden"
             }`}
           >
-            <Tabs
-              className={`w-full h-full flex flex-col ${isCinemaMode ? "overflow-hidden" : ""}`}
-              defaultValue={isWorking ? "work" : "break"}
-              value={selectedPlaylist}
-              onChange={setSelectedPlaylist}
-            >
-              {!isCinemaMode && (
+            <div className={`w-full h-full flex flex-col ${
+              isCinemaMode 
+                ? "bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden p-1 shadow-xl" 
+                : ""
+            }`}>
+              <Tabs
+                className={`w-full h-full flex flex-col ${isCinemaMode ? "overflow-hidden" : ""}`}
+                defaultValue={isWorking ? "work" : "break"}
+                value={selectedPlaylist}
+                onChange={setSelectedPlaylist}
+              >
+                {!isCinemaMode && (
                 <Tabs.List className="flex items-center w-full flex-wrap flex-shrink-0">
                   <Tabs.Tab value="work">work playlist</Tabs.Tab>
                   <Tabs.Tab value="break">
@@ -189,6 +203,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                 </div>
               </Tabs.Panel>
             </Tabs>
+            </div>
           </div>
         </div>
       </div>

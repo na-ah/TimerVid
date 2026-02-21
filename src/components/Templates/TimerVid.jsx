@@ -15,30 +15,40 @@ export default function TimerVid() {
 
   return (
     <>
-      <MantineProvider>
-        <div className={`min-h-dvh min-w-[240px] w-full max-w-[1920px] mx-auto px-4 ${isCinemaMode ? "py-2" : ""}`}>
-          <Toaster />
-          {!isCinemaMode && <Header setIsShowTutorial={setIsShowTutorial} />}
-          {!isCinemaMode && (
-            <TutorialContainer
-              isShowTutorial={isShowTutorial}
-              setIsShowTutorial={setIsShowTutorial}
-            />
-          )}
-          <PlaylistProvider>
-            <TimerProvider>
-              <TimersWithControllerContainer />
-            </TimerProvider>
-            <PlaylistContainer 
-              isCinemaMode={isCinemaMode} 
-              setIsCinemaMode={setIsCinemaMode}
-            >
-              <PlayerContainer 
+      <MantineProvider forceColorScheme={isCinemaMode ? "dark" : "light"}>
+        <div className={`min-h-dvh min-w-[240px] w-full transition-all duration-700 ease-in-out ${
+          isCinemaMode 
+            ? "bg-[#0f1115] text-zinc-100 dark" 
+            : "bg-white text-zinc-900"
+        }`}>
+          <div className={`max-w-[1920px] mx-auto px-4 ${isCinemaMode ? "py-2" : "py-4"}`}>
+            <Toaster />
+            {!isCinemaMode && (
+              <>
+                <Header setIsShowTutorial={setIsShowTutorial} />
+                <TutorialContainer
+                  isShowTutorial={isShowTutorial}
+                  setIsShowTutorial={setIsShowTutorial}
+                />
+              </>
+            )}
+            <PlaylistProvider>
+              {!isCinemaMode && (
+                <TimerProvider>
+                  <TimersWithControllerContainer />
+                </TimerProvider>
+              )}
+              <PlaylistContainer 
                 isCinemaMode={isCinemaMode} 
                 setIsCinemaMode={setIsCinemaMode}
-              />
-            </PlaylistContainer>
-          </PlaylistProvider>
+              >
+                <PlayerContainer 
+                  isCinemaMode={isCinemaMode} 
+                  setIsCinemaMode={setIsCinemaMode}
+                />
+              </PlaylistContainer>
+            </PlaylistProvider>
+          </div>
         </div>
       </MantineProvider>
     </>

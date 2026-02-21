@@ -98,11 +98,11 @@ export default function PlaylistTabs(props) {
                 </div>
               ) : null}
 
-              <div className={`${isMinimal ? "flex-1 h-full" : "h-[300px]"} overflow-auto`}>
+              <div className={`${isMinimal ? "flex-1 h-full" : "h-[300px]"} overflow-auto custom-scrollbar`}>
                 <Table
                   stickyHeader
                   highlightOnHover
-                  striped={isMinimal}
+                  className={isMinimal ? "border-t border-white/5" : ""}
                 >
                   {!isMinimal && (
                     <Table.Thead>
@@ -123,32 +123,31 @@ export default function PlaylistTabs(props) {
                         
                         if (!video) return null;
 
+                        const isActive = currentVideoIndex === index;
+
                         return (
                           <Table.Tr
                             key={`${video.id}-${index}`}
                             onClick={() => setCurrentVideoId(video.id)}
-                            className="cursor-pointer group"
-                            style={{
-                              background:
-                                currentVideoIndex === index
-                                  ? "var(--mantine-color-green-1)" // Using Mantine var or fallback
-                                  : "none",
-                              fontWeight: currentVideoIndex === index ? "bold" : "normal",
-                            }}
+                            className={`cursor-pointer group border-b border-white/5 transition-colors ${
+                              isActive 
+                                ? "bg-indigo-500/10 text-indigo-400 font-bold" 
+                                : "hover:bg-white/5 text-zinc-400 hover:text-zinc-200"
+                            }`}
                           >
-                            <Table.Td className="text-center text-xs sm:text-sm">
+                            <Table.Td className="text-center text-xs py-3 border-none">
                               {String(index + 1).padStart(2, "0")}
                             </Table.Td>
-                            <Table.Td className="text-left text-xs sm:text-sm truncate max-w-[150px] sm:max-w-none">
-                              {video.title}
+                            <Table.Td className="text-left text-xs sm:text-sm truncate max-w-[150px] sm:max-w-none py-3 border-none">
+                              <span className={isActive ? "text-indigo-400" : ""}>{video.title}</span>
                             </Table.Td>
                             {!isMinimal && (
-                              <Table.Td className="text-right text-xs">
+                              <Table.Td className="text-right text-xs py-3 border-none">
                                 {video.length}
                               </Table.Td>
                             )}
                             {!isMinimal && (
-                              <Table.Td className="text-center w-12">
+                              <Table.Td className="text-center w-12 py-3 border-none">
                                 <ActionIcon
                                   color="red"
                                   variant="subtle"
