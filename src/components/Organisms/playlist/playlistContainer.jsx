@@ -3,15 +3,16 @@ import PlaylistTabs from "../../Molecules/playlist/playlistTabs";
 import { PlaylistContext } from "../../../context/playlistProvider";
 import PlaylistInfo from "../../Molecules/playlist/playlistInfo";
 import PlaylistAddVideoModal from "../../Molecules/playlist/playlistAddVideoModal";
-import { Tabs, ActionIcon, Tooltip, Group, Button } from "@mantine/core";
+import { Tabs, ActionIcon, Tooltip, Group, Button, Modal } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { GoArrowSwitch } from "react-icons/go";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
 import { TbPlayerTrackPrevFilled } from "react-icons/tb";
 import PlaylistAddVideoListModal from "../../Molecules/playlist/playlistAddVideoListModal";
-import { FaPlus, FaExpand, FaCompress } from "react-icons/fa6";
+import { FaPlus, FaExpand, FaCompress, FaList } from "react-icons/fa6";
 import PlaylistAddModal from "../../Molecules/playlist/playlistAddModal";
 
-export default function PlaylistContainer({ children }) {
+export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaMode }) {
   const { workPlaylist } = useContext(PlaylistContext);
   const { breakPlaylist } = useContext(PlaylistContext);
   const {
@@ -24,15 +25,34 @@ export default function PlaylistContainer({ children }) {
     removePlaylist,
   } = useContext(PlaylistContext);
 
-  const [isCinemaMode, setIsCinemaMode] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-6 w-full items-start">
+      <Modal opened={opened} onClose={close} title="プレイリスト切り替え" centered>
+        <div className="flex flex-col gap-4">
+          <Button 
+            variant={selectedPlaylist === 'work' ? "filled" : "light"} 
+            onClick={() => { setSelectedPlaylist('work'); close(); }}
+            fullWidth
+          >
+            Work Playlist
+          </Button>
+          <Button 
+            variant={selectedPlaylist === 'break' ? "filled" : "light"} 
+            onClick={() => { setSelectedPlaylist('break'); close(); }}
+            fullWidth
+          >
+            Break Playlist
+          </Button>
+        </div>
+      </Modal>
+
+      <div className={`flex flex-col md:flex-row gap-6 w-full items-start transition-all duration-500 ease-in-out ${isCinemaMode ? "h-[calc(100vh-140px)]" : ""}`}>
         {/* Left Column: Player & Current Info */}
         <div
-          className={`flex flex-col w-full transition-all duration-500 ease-in-out ${
-            isCinemaMode ? "md:w-4/5" : "md:w-1/5"
+          className={`flex flex-col w-full h-full transition-all duration-500 ease-in-out ${
+            isCinemaMode ? "md:w-[70%]" : "md:w-[20%]"
           }`}
         >
           <div className="mb-2 flex justify-end">
@@ -56,19 +76,30 @@ export default function PlaylistContainer({ children }) {
             )}
           </div>
           
-          <div className="w-full shadow-lg rounded-lg overflow-hidden">
+          <div className="w-full shadow-lg rounded-lg overflow-hidden flex-shrink-0">
             {children}
           </div>
         </div>
 
         {/* Right Column: Playlist Selection */}
         <div
-          className={`w-full transition-all duration-500 ease-in-out ${
-            isCinemaMode ? "md:w-1/5" : "md:w-4/5"
+          className={`w-full h-full flex flex-col transition-all duration-500 ease-in-out ${
+            isCinemaMode ? "md:w-[30%]" : "md:w-[80%]"
           }`}
         >
+          {isCinemaMode && (
+            <div className="flex justify-between items-center mb-2 px-2">
+              <h3 className="font-bold text-lg truncate">
+                {selectedPlaylist === 'work' ? "Work Playlist" : "Break Playlist"}
+              </h3>
+              <ActionIcon variant="subtle" onClick={open}>
+                <FaList />
+              </ActionIcon>
+            </div>
+          )}
+
           <Tabs
-            className="w-full"
+            className={`w-full ${isCinemaMode ? "flex-1 overflow-hidden flex flex-col" : ""}`}
             defaultValue={isWorking ? "work" : "break"}
             value={selectedPlaylist}
             onChange={setSelectedPlaylist}
@@ -115,8 +146,8 @@ export default function PlaylistContainer({ children }) {
               </Tabs.List>
             )}
 
-            <Tabs.Panel value="work">
-              <div className="my-4">
+            <Tabs.Panel value="work" className={isCinemaMode ? "flex-1 overflow-hidden" : ""}>
+              <div className={`my-4 ${isCinemaMode ? "h-full overflow-y-auto" : ""}`}>
                 {!isCinemaMode && (
                   <>
                     <PlaylistAddVideoListModal {...workPlaylist} />
@@ -133,8 +164,8 @@ export default function PlaylistContainer({ children }) {
                 />
               </div>
             </Tabs.Panel>
-            <Tabs.Panel value="break">
-              <div className="my-4">
+            <Tabs.Panel value="break" className={isCinemaMode ? "flex-1 overflow-hidden" : ""}>
+              <div className={`my-4 ${isCinemaMode ? "h-full overflow-y-auto" : ""}`}>
                 {!isCinemaMode && (
                   <>
                     <PlaylistAddVideoListModal {...breakPlaylist} />

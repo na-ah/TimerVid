@@ -11,6 +11,8 @@ import { Toaster } from "../ui/toaster";
 
 export default function TimerVid() {
   const [isShowTutorial, setIsShowTutorial] = useState(true);
+  const [isCinemaMode, setIsCinemaMode] = useState(false);
+
   return (
     <>
       <MantineProvider>
@@ -25,8 +27,11 @@ export default function TimerVid() {
             <TimerProvider>
               <TimersWithControllerContainer />
             </TimerProvider>
-            <PlaylistContainer>
-              <PlayerContainer />
+            <PlaylistContainer 
+              isCinemaMode={isCinemaMode} 
+              setIsCinemaMode={setIsCinemaMode}
+            >
+              <PlayerContainer isCinemaMode={isCinemaMode} />
             </PlaylistContainer>
           </PlaylistProvider>
         </div>
