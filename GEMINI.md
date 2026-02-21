@@ -89,3 +89,9 @@ src/
     - Use **Context** for feature-specific domain state (Timer logic, Playlist data).
 - **Language:** **STRICTLY** use **Japanese** for all user-facing communication, especially in the final response and summary. Thinking process can be in English for performance, but the result must be in Japanese.
 - **Responsiveness:** Ensure designs work on Mobile, Tablet (Portrait/Landscape), and Desktop. Use standard Tailwind breakpoints (`md`, `lg`, `xl`).
+
+## Git Workflow & Commit Guidelines
+- **Atomic Commits:** Break down changes into small, self-contained commits. Each commit should represent a single logical unit of work (e.g., one feature, one bug fix, one refactor). Avoid batching unrelated changes into a single "bulk" commit.
+- **Verification:** ALWAYS run `git status` and `git diff` (or `git diff --staged`) before committing to verify exactly what is being staged. Ensure no unintended files are included.
+- **Message Convention:** Use clear, descriptive commit messages following the Conventional Commits pattern where possible (e.g., `feat: add cinema mode toggle`, `fix: resolve hydration error in timer`).
+- **Proactivity:** When a sub-task or logical step is completed and verified, propose a commit immediately rather than waiting for the entire session's work to finish.
