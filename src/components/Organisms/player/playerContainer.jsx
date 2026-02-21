@@ -1,12 +1,12 @@
 import usePlayer from "../../../hooks/usePlayer";
 import Player from "../../Molecules/player/player";
-import { FaPlay, FaPause, FaForwardStep, FaBackwardStep, FaVolumeHigh, FaVolumeLow, FaVolumeXmark } from "react-icons/fa6";
+import { FaPlay, FaPause, FaForwardStep, FaBackwardStep, FaVolumeHigh, FaVolumeLow, FaVolumeXmark, FaExpand } from "react-icons/fa6";
 import { useAtomValue } from "jotai";
 import { isPlayingAtom } from "../../../atoms/atoms";
 import { useContext } from "react";
 import { PlaylistContext } from "../../../context/playlistProvider";
 
-export default function PlayerContainer({ isCinemaMode }) {
+export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
   const { opts, onReady, onEnd, onError, onStateChange, controller, volume, isMuted } = usePlayer();
   const isPlaying = useAtomValue(isPlayingAtom);
   const { nextVideo, prevVideo, isWorking, workPlaylist, breakPlaylist } = useContext(PlaylistContext);
@@ -130,9 +130,19 @@ export default function PlayerContainer({ isCinemaMode }) {
       </div>
 
       {/* Info & Controls Section */}
-      <div className="flex flex-col flex-1 p-3 justify-between min-w-0 bg-zinc-800/50">
+      <div className="flex flex-col flex-1 p-3 justify-between min-w-0 bg-zinc-800/50 relative">
+        {/* Cinema Mode Toggle (Top Right) */}
+        <button
+          onClick={() => setIsCinemaMode(true)}
+          className="absolute top-2 right-2 flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white px-2 py-1 rounded hover:bg-white/10 transition-colors z-10"
+          title="シアターモードへ切り替え"
+        >
+          <span>シアター</span>
+          <FaExpand size={14} />
+        </button>
+
         {/* Title */}
-        <div className="w-full">
+        <div className="w-full pr-16"> {/* Avoid overlap with toggle button */}
           <h3 className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight" title={currentTitle}>
             {currentTitle || "動画が選択されていません"}
           </h3>

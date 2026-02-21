@@ -143,18 +143,6 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                     >
                       新規
                     </Button>
-
-                    <Tooltip label="シアターモード" position="bottom" withArrow>
-                      <ActionIcon
-                        variant="light"
-                        color="gray"
-                        onClick={() => setIsCinemaMode(true)}
-                        size="lg"
-                        className="ml-2"
-                      >
-                        <FaExpand size={20} />
-                      </ActionIcon>
-                    </Tooltip>
                   </div>
                 </Tabs.List>
               )}

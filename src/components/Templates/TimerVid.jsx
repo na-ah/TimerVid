@@ -33,7 +33,10 @@ export default function TimerVid() {
               isCinemaMode={isCinemaMode} 
               setIsCinemaMode={setIsCinemaMode}
             >
-              <PlayerContainer isCinemaMode={isCinemaMode} />
+              <PlayerContainer 
+                isCinemaMode={isCinemaMode} 
+                setIsCinemaMode={setIsCinemaMode}
+              />
             </PlaylistContainer>
           </PlaylistProvider>
         </div>
