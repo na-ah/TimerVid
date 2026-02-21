@@ -29,7 +29,7 @@ export default function PlaylistTabs(props) {
         orientation="vertical"
         onChange={setActivePlaylist}
         value={activePlaylist}
-        className={isMinimal ? "flex-col" : ""}
+        className={isMinimal ? "flex-col h-full" : ""}
       >
         {!isMinimal && (
           <Tabs.List>
@@ -52,7 +52,7 @@ export default function PlaylistTabs(props) {
             <Tabs.Panel
               key={i}
               value={playlist.title}
-              className={isMinimal ? "w-full pl-2" : "ml-5 w-full"}
+              className={isMinimal ? "w-full pl-2 h-full flex flex-col" : "ml-5 w-full"}
             >
               {!isMinimal ? (
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-3 mb-5 gap-3">
@@ -97,14 +97,14 @@ export default function PlaylistTabs(props) {
                   </Group>
                 </div>
               ) : (
-                <div className="mb-2 mt-1">
+                <div className="mb-2 mt-1 flex-shrink-0">
                   <h3 className="font-bold text-lg truncate text-zinc-700 dark:text-zinc-300">
                     {activePlaylist}
                   </h3>
                 </div>
               )}
 
-              <div className={`${isMinimal ? "h-[calc(100dvh-300px)]" : "h-[300px]"} overflow-auto`}>
+              <div className={`${isMinimal ? "flex-1 h-full" : "h-[300px]"} overflow-auto`}>
                 <Table
                   stickyHeader
                   highlightOnHover

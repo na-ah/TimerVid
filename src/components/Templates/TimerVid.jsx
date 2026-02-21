@@ -16,13 +16,15 @@ export default function TimerVid() {
   return (
     <>
       <MantineProvider>
-        <div className="min-h-dvh min-w-[240px] w-full max-w-[1920px] mx-auto px-4">
+        <div className={`min-h-dvh min-w-[240px] w-full max-w-[1920px] mx-auto px-4 ${isCinemaMode ? "py-2" : ""}`}>
           <Toaster />
-          <Header setIsShowTutorial={setIsShowTutorial} />
-          <TutorialContainer
-            isShowTutorial={isShowTutorial}
-            setIsShowTutorial={setIsShowTutorial}
-          />
+          {!isCinemaMode && <Header setIsShowTutorial={setIsShowTutorial} />}
+          {!isCinemaMode && (
+            <TutorialContainer
+              isShowTutorial={isShowTutorial}
+              setIsShowTutorial={setIsShowTutorial}
+            />
+          )}
           <PlaylistProvider>
             <TimerProvider>
               <TimersWithControllerContainer />
