@@ -80,48 +80,23 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
           </div>
         )}
 
-        <div className={`flex flex-col md:flex-row gap-6 w-full items-start flex-1 overflow-hidden transition-all duration-500 ease-in-out`}>
+        <div className={`flex w-full items-start flex-1 overflow-hidden transition-all duration-500 ease-in-out ${isCinemaMode ? "flex-col md:flex-row gap-6" : "flex-col gap-4"}`}>
           {/* Left Column: Player & Current Info */}
           <div
-            className={`flex flex-col w-full h-full transition-all duration-500 ease-in-out ${
-              isCinemaMode ? "md:w-[70%]" : "md:w-[20%]"
+            className={`flex flex-col w-full transition-all duration-500 ease-in-out ${
+              isCinemaMode ? "h-full md:w-[70%]" : "shrink-0"
             }`}
           >
-            {!isCinemaMode && (
-              <div className="mb-2 flex justify-end">
-                <Tooltip label="シアターモード" position="left" withArrow>
-                  <ActionIcon
-                    variant="light"
-                    color="gray"
-                    onClick={() => setIsCinemaMode(true)}
-                    size="lg"
-                  >
-                    <FaExpand size={20} />
-                  </ActionIcon>
-                </Tooltip>
-              </div>
-            )}
-
-            {!isCinemaMode && (
-              <div className="mb-4">
-                {isWorking ? (
-                  <PlaylistInfo {...workPlaylist} isMinimal={true} />
-                ) : (
-                  <PlaylistInfo {...breakPlaylist} isMinimal={true} />
-                )}
-              </div>
-            )}
-            
             {/* Player Container */}
-            <div className={`w-full shadow-lg rounded-lg overflow-hidden flex-shrink-0 ${isCinemaMode ? "h-full flex flex-col" : ""}`}>
+            <div className={`w-full shadow-lg rounded-xl overflow-hidden flex-shrink-0 ${isCinemaMode ? "h-full flex flex-col" : ""}`}>
               {children}
             </div>
           </div>
 
           {/* Right Column: Playlist Selection */}
           <div
-            className={`w-full h-full flex flex-col transition-all duration-500 ease-in-out ${
-              isCinemaMode ? "md:w-[30%]" : "md:w-[80%]"
+            className={`w-full flex flex-col transition-all duration-500 ease-in-out ${
+              isCinemaMode ? "h-full md:w-[30%]" : "flex-1 overflow-hidden"
             }`}
           >
             <Tabs
@@ -168,6 +143,18 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                     >
                       新規
                     </Button>
+
+                    <Tooltip label="シアターモード" position="bottom" withArrow>
+                      <ActionIcon
+                        variant="light"
+                        color="gray"
+                        onClick={() => setIsCinemaMode(true)}
+                        size="lg"
+                        className="ml-2"
+                      >
+                        <FaExpand size={20} />
+                      </ActionIcon>
+                    </Tooltip>
                   </div>
                 </Tabs.List>
               )}
