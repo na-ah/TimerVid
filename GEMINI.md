@@ -87,5 +87,5 @@ src/
 - **State:**
     - Use **Jotai** (`atoms/atoms.ts`) for cross-cutting global state (e.g., player instance, global flags).
     - Use **Context** for feature-specific domain state (Timer logic, Playlist data).
-- **Language:** Always respond to the user in **Japanese** unless explicitly asked otherwise.
+- **Language:** **STRICTLY** use **Japanese** for all user-facing communication, especially in the final response and summary. Thinking process can be in English for performance, but the result must be in Japanese.
 - **Responsiveness:** Ensure designs work on Mobile, Tablet (Portrait/Landscape), and Desktop. Use standard Tailwind breakpoints (`md`, `lg`, `xl`).
