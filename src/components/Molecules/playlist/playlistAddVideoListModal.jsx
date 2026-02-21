@@ -39,7 +39,7 @@ export default function PlaylistAddVideoListModal(props) {
           setPlaylistInput("");
         }}
         title={<span className="font-bold text-lg">YouTube再生リストから一括追加</span>}
-        centered
+        yOffset="10vh"
         size="lg"
         overlayProps={{ blur: 3 }}
       >

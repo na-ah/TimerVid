@@ -37,7 +37,7 @@ export default function PlaylistAddVideoModal(props) {
           setTitleInput("");
         }}
         title={<span className="font-bold text-lg">動画をプレイリストに追加</span>}
-        centered
+        yOffset="10vh"
         overlayProps={{ blur: 3 }}
       >
         <form
@@ -57,7 +57,7 @@ export default function PlaylistAddVideoModal(props) {
             <TextInput
               data-autofocus
               label="YouTube URL または 動画ID"
-              placeholder="https://www.youtube.com/watch?v=..."
+              placeholder="https://www.youtube.com/watch?v=... または https://youtu.be/..."
               value={urlInput}
               onChange={(e) => {
                 setUrlInput(e.target.value);

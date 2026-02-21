@@ -20,7 +20,7 @@ export default function PlaylistAddModal(props) {
           setNewPlaylist("");
         }}
         title={<span className="font-bold text-lg">新しいプレイリストを追加</span>}
-        centered
+        yOffset="10vh"
         overlayProps={{ blur: 3 }}
       >
         <form
