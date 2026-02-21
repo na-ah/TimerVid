@@ -11,6 +11,8 @@ export default function usePlayer() {
   const { currentVideoId, nextVideo } = useContext(PlaylistContext);
   const [retryCount, setRetryCount] = useState(0);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [volume, setVolumeState] = useState(50);
+  const [isMuted, setIsMutedState] = useState(false);
   
   // Ref to hold the current intended playing state so we can access it inside onStateChange without causing re-renders
   const isPlayingRef = useRef(isPlaying);
@@ -67,6 +69,27 @@ export default function usePlayer() {
           }
         }
         return currentPlayer;
+      case "setVolume":
+        if (currentPlayer) {
+          currentPlayer.setVolume(action.payload);
+          setVolumeState(action.payload);
+          if (action.payload > 0 && isMuted) {
+            currentPlayer.unMute();
+            setIsMutedState(false);
+          }
+        }
+        return currentPlayer;
+      case "toggleMute":
+        if (currentPlayer) {
+          if (currentPlayer.isMuted()) {
+            currentPlayer.unMute();
+            setIsMutedState(false);
+          } else {
+            currentPlayer.mute();
+            setIsMutedState(true);
+          }
+        }
+        return currentPlayer;
       default:
         return currentPlayer;
     }
@@ -98,6 +121,15 @@ export default function usePlayer() {
     rawController({ type: "setPlayer", player: e.target });
     setIsPlayerReady(true);
     setRetryCount(0);
+    
+    // Sync initial volume state
+    if (e.target.getVolume) {
+      setVolumeState(e.target.getVolume());
+    }
+    if (e.target.isMuted) {
+      setIsMutedState(e.target.isMuted());
+    }
+
     try {
       e.target.loadVideoById({
         videoId: currentVideoId,
@@ -206,5 +238,7 @@ export default function usePlayer() {
     onError,
     onStateChange,
     isPlayerReady,
+    volume,
+    isMuted,
   };
 }
