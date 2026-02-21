@@ -179,12 +179,18 @@ export default function usePlaylist(mode) {
   };
 
   const extractVideoId = (url) => {
+    if (!url) return false;
     if (url.length === 11) {
       return url;
     }
 
-    const r = /watch\?v=([a-zA-Z0-9_-]{11})/;
-    const result = url.match(r);
+    // Support for:
+    // https://www.youtube.com/watch?v=VIDEO_ID
+    // https://youtu.be/VIDEO_ID
+    // https://www.youtube.com/embed/VIDEO_ID
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const result = url.match(regex);
+    
     if (result !== null) {
       return result[1];
     } else {
