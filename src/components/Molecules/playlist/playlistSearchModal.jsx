@@ -1,6 +1,7 @@
 import { Modal, TextInput, Button, ScrollArea, Group, Text, Loader, Stack } from "@mantine/core";
 import { useState } from "react";
-import { FaMagnifyingGlass, FaPlus } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa6";
+import { FaSearch } from "react-icons/fa";
 import axios from "axios";
 import { Duration } from "luxon";
 
@@ -77,7 +78,7 @@ export default function PlaylistSearchModal(props) {
             data-autofocus
             rightSection={isSearching && <Loader size="xs" />}
           />
-          <Button type="submit" leftSection={<FaMagnifyingGlass />} loading={isSearching}>
+          <Button type="submit" leftSection={<FaSearch />} loading={isSearching}>
             検索
           </Button>
         </Group>
