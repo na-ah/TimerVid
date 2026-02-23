@@ -21,33 +21,36 @@ export default function TimerVid() {
             ? "bg-[#0f1115] text-zinc-100 dark" 
             : "bg-white text-zinc-900"
         }`}>
-          <div className={`max-w-[1920px] mx-auto px-4 ${isCinemaMode ? "py-2" : "py-4"}`}>
+          <div className="max-w-[1920px] mx-auto">
             <Toaster />
             {!isCinemaMode && (
-              <>
-                <Header setIsShowTutorial={setIsShowTutorial} />
+              <Header setIsShowTutorial={setIsShowTutorial} />
+            )}
+            
+            <div className={`px-4 ${isCinemaMode ? "py-2" : "py-4"}`}>
+              {!isCinemaMode && (
                 <TutorialContainer
                   isShowTutorial={isShowTutorial}
                   setIsShowTutorial={setIsShowTutorial}
                 />
-              </>
-            )}
-            <PlaylistProvider>
-              {!isCinemaMode && (
-                <TimerProvider>
-                  <TimersWithControllerContainer />
-                </TimerProvider>
               )}
-              <PlaylistContainer 
-                isCinemaMode={isCinemaMode} 
-                setIsCinemaMode={setIsCinemaMode}
-              >
-                <PlayerContainer 
+              <PlaylistProvider>
+                {!isCinemaMode && (
+                  <TimerProvider>
+                    <TimersWithControllerContainer />
+                  </TimerProvider>
+                )}
+                <PlaylistContainer 
                   isCinemaMode={isCinemaMode} 
                   setIsCinemaMode={setIsCinemaMode}
-                />
-              </PlaylistContainer>
-            </PlaylistProvider>
+                >
+                  <PlayerContainer 
+                    isCinemaMode={isCinemaMode} 
+                    setIsCinemaMode={setIsCinemaMode}
+                  />
+                </PlaylistContainer>
+              </PlaylistProvider>
+            </div>
           </div>
         </div>
       </MantineProvider>
