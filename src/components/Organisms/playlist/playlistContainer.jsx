@@ -23,6 +23,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
     nextVideo,
     prevVideo,
     removePlaylist,
+    changeSubPlaylist,
   } = useContext(PlaylistContext);
 
   const [opened, { open, close }] = useDisclosure(false);
@@ -36,7 +37,10 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
             <Button 
               key={i}
               variant={activeContext.activePlaylist === pl.title ? "filled" : "light"} 
-              onClick={() => { activeContext.setActivePlaylist(pl.title); close(); }}
+              onClick={() => { 
+                changeSubPlaylist(pl.title, selectedPlaylist);
+                close(); 
+              }}
               fullWidth
               className="justify-start h-auto py-3 flex-shrink-0 min-h-[60px]"
             >

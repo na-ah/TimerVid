@@ -49,6 +49,21 @@ export default function PlaylistProvider({ children }) {
     isWorking ? workPlaylist.removePlaylist() : breakPlaylist.removePlaylist();
   };
 
+  const changeSubPlaylist = (title, mode) => {
+    const playlist = mode === "work" ? workPlaylist : breakPlaylist;
+    playlist.setActivePlaylist(title);
+
+    const currentMode = isWorking ? "work" : "break";
+
+    if (mode === currentMode) {
+      const targetPlaylist = playlist.playlists.find((p) => p.title === title);
+      if (targetPlaylist && targetPlaylist.videoIds.length > 0) {
+        setResumeTime(0);
+        playlist.setCurrentVideoId(targetPlaylist.videoIds[0]);
+      }
+    }
+  };
+
   return (
     <>
       <PlaylistContext.Provider
@@ -65,6 +80,7 @@ export default function PlaylistProvider({ children }) {
           nextVideo,
           prevVideo,
           removePlaylist,
+          changeSubPlaylist,
         }}
       >
         {children}
