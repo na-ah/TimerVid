@@ -8,7 +8,7 @@ export default function Header({ setIsShowTutorial }) {
 
   return (
     <>
-      <header className="w-full h-12 sm:h-14 md:h-16 px-4 sm:px-6 flex items-center justify-between border-b border-zinc-100/80 sticky top-0 bg-white/80 backdrop-blur-md z-50 transition-all">
+      <header className="w-full h-12 sm:h-14 md:h-16 px-4 flex items-center justify-between border-b border-zinc-100/80 sticky top-0 bg-white/80 backdrop-blur-md z-50 transition-all">
         <h1 className="font-silkScreen text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 inline-block text-transparent bg-clip-text select-none cursor-default">
           TimerVid
         </h1>
