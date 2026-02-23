@@ -54,12 +54,12 @@ export default function PlaylistTabs(props) {
             <Tabs.Panel
               key={i}
               value={playlist.title}
-              className={isMinimal ? "w-full pl-2 h-full flex flex-col" : "ml-5 w-full"}
+              className={isMinimal ? "w-full pl-2 h-full flex flex-col" : "ml-0 sm:ml-5 flex-1 min-w-0 flex flex-col"}
             >
               {!isMinimal ? (
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-3 mb-5 gap-3">
-                  <Group spacing="sm" align="center">
-                    <h1 className="text-2xl font-bold m-0">{activePlaylist}</h1>
+                <div className="flex flex-col xl:flex-row justify-between xl:items-center mt-3 mb-5 gap-3">
+                  <div className="flex items-center gap-2 flex-wrap min-w-0">
+                    <h1 className="text-xl sm:text-2xl font-bold m-0 truncate">{activePlaylist}</h1>
                     {canDeletePlaylist && isWorking === (tabMode === "work") && (
                       <ActionIcon
                         color="red"
@@ -68,20 +68,21 @@ export default function PlaylistTabs(props) {
                         onClick={() => {
                           if (removePlaylist) removePlaylist();
                         }}
-                        className="mt-1"
+                        className="mt-1 flex-shrink-0"
                       >
                         <FaTrash size={16} />
                       </ActionIcon>
                     )}
-                  </Group>
+                  </div>
                   
-                  <Group spacing="sm">
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       variant="light"
                       color="teal"
                       size="sm"
                       leftSection={<FaSearch />}
                       onClick={openSearchVideo}
+                      className="flex-shrink-0"
                     >
                       検索
                     </Button>
@@ -92,6 +93,7 @@ export default function PlaylistTabs(props) {
                       size="sm"
                       leftSection={<FaPlus />}
                       onClick={openAddVideo}
+                      className="flex-shrink-0"
                     >
                       動画を追加
                     </Button>
@@ -102,10 +104,11 @@ export default function PlaylistTabs(props) {
                       size="sm"
                       leftSection={<RiPlayListAddFill />}
                       onClick={openAddVideoList}
+                      className="flex-shrink-0"
                     >
                       一括追加
                     </Button>
-                  </Group>
+                  </div>
                 </div>
               ) : null}
 
@@ -114,14 +117,15 @@ export default function PlaylistTabs(props) {
                   stickyHeader
                   highlightOnHover
                   className={isMinimal ? "border-t border-white/5" : ""}
+                  layout="fixed"
                 >
                   {!isMinimal && (
                     <Table.Thead>
                       <Table.Tr>
                         <Table.Th className="text-center w-8">#</Table.Th>
-                        <Table.Th className="text-left">title</Table.Th>
+                        <Table.Th className="text-left w-auto">title</Table.Th>
                         <Table.Th className="text-right w-16">len</Table.Th>
-                        <Table.Th className="text-center w-8"></Table.Th>
+                        <Table.Th className="text-center w-12"></Table.Th>
                       </Table.Tr>
                     </Table.Thead>
                   )}
@@ -146,14 +150,16 @@ export default function PlaylistTabs(props) {
                                 : "hover:bg-white/5 text-zinc-400 hover:text-zinc-200"
                             }`}
                           >
-                            <Table.Td className="text-center text-xs py-3 border-none">
+                            <Table.Td className="text-center text-xs py-3 border-none w-8">
                               {String(index + 1).padStart(2, "0")}
                             </Table.Td>
-                            <Table.Td className="text-left text-xs sm:text-sm truncate max-w-[150px] sm:max-w-none py-3 border-none">
-                              <span className={isActive ? "text-indigo-400" : ""}>{video.title}</span>
+                            <Table.Td className="text-left text-xs sm:text-sm py-3 border-none">
+                              <div className="truncate w-full max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-none">
+                                <span className={isActive ? "text-indigo-400" : ""}>{video.title}</span>
+                              </div>
                             </Table.Td>
                             {!isMinimal && (
-                              <Table.Td className="text-right text-xs py-3 border-none">
+                              <Table.Td className="text-right text-xs py-3 border-none w-16">
                                 {video.length}
                               </Table.Td>
                             )}
