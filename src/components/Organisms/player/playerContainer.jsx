@@ -109,8 +109,11 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
                   max="100"
                   value={isMuted ? 0 : volume}
                   onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
-                  className="w-full h-1.5 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 transition-all"
-                  style={{ WebkitAppearance: "none" }}
+                  className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 transition-all"
+                  style={{ 
+                    WebkitAppearance: "none",
+                    background: `linear-gradient(to right, #6366f1 ${isMuted ? 0 : volume}%, #3f3f46 ${isMuted ? 0 : volume}%)`
+                  }}
                 />
               </div>
             </div>
@@ -203,8 +206,11 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
               max="100"
               value={isMuted ? 0 : volume}
               onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
-              className="w-full bg-zinc-600 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 h-1"
-              style={{ WebkitAppearance: "none" }}
+              className="w-full h-1 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400"
+              style={{ 
+                WebkitAppearance: "none",
+                background: `linear-gradient(to right, #6366f1 ${isMuted ? 0 : volume}%, #52525b ${isMuted ? 0 : volume}%)`
+              }}
             />
           </div>
         </div>
