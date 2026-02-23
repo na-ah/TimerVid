@@ -178,6 +178,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                         searchVideos={workPlaylist.searchVideos}
                         searchResults={workPlaylist.searchResults}
                         isSearching={workPlaylist.isSearching}
+                        nextPageToken={workPlaylist.nextPageToken}
                         addVideoToPlaylist={workPlaylist.addVideoToPlaylist}
                         activePlaylist={workPlaylist.activePlaylist}
                       />
@@ -209,6 +210,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                         searchVideos={breakPlaylist.searchVideos}
                         searchResults={breakPlaylist.searchResults}
                         isSearching={breakPlaylist.isSearching}
+                        nextPageToken={breakPlaylist.nextPageToken}
                         addVideoToPlaylist={breakPlaylist.addVideoToPlaylist}
                         activePlaylist={breakPlaylist.activePlaylist}
                       />

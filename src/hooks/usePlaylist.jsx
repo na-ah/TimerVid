@@ -39,16 +39,19 @@ export default function usePlaylist(mode) {
   // 検索関連
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [nextPageToken, setNextPageToken] = useState("");
   const [
     searchVideoOpened,
     { open: openSearchVideo, close: closeSearchVideo },
   ] = useDisclosure(false);
 
-  const searchVideos = async (query) => {
+  const searchVideos = async (query, order = "relevance", pageToken = "") => {
     if (!query || !process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY) return;
     
     setIsSearching(true);
-    setSearchResults([]);
+    if (!pageToken) {
+      setSearchResults([]);
+    }
 
     const config = {
       url: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API}/search`,
@@ -60,6 +63,8 @@ export default function usePlaylist(mode) {
         part: "snippet",
         q: query,
         type: "video",
+        order: order,
+        pageToken: pageToken,
         maxResults: 20,
         key: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY}`,
       },
@@ -67,7 +72,12 @@ export default function usePlaylist(mode) {
 
     try {
       const res = await axios(config);
-      setSearchResults(res.data.items || []);
+      if (pageToken) {
+        setSearchResults((prev) => [...prev, ...(res.data.items || [])]);
+      } else {
+        setSearchResults(res.data.items || []);
+      }
+      setNextPageToken(res.data.nextPageToken || "");
     } catch (error) {
       console.error("Error searching videos:", error);
     } finally {
@@ -525,5 +535,6 @@ export default function usePlaylist(mode) {
     searchVideoOpened,
     openSearchVideo,
     closeSearchVideo,
+    nextPageToken,
   };
 }
