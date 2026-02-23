@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, Tabs, ActionIcon, Button, Group } from "@mantine/core";
-import { FaPlus, FaTrash } from "react-icons/fa6";
+import { FaPlus, FaTrash, FaSearch } from "react-icons/fa6";
 import { RiPlayListAddFill } from "react-icons/ri";
 
 export default function PlaylistTabs(props) {
@@ -12,6 +12,7 @@ export default function PlaylistTabs(props) {
     setActivePlaylist,
     openAddVideo,
     openAddVideoList,
+    openSearchVideo, // New prop
     currentVideoIndex,
     removeVideoFromPlaylist,
     removePlaylist,
@@ -74,6 +75,15 @@ export default function PlaylistTabs(props) {
                   </Group>
                   
                   <Group spacing="sm">
+                    <Button
+                      variant="light"
+                      color="teal"
+                      size="sm"
+                      leftSection={<FaSearch />}
+                      onClick={openSearchVideo}
+                    >
+                      検索
+                    </Button>
                     <Button
                       id="tutorial3-1"
                       variant="light"

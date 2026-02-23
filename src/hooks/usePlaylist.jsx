@@ -36,6 +36,45 @@ export default function usePlaylist(mode) {
     { open: openAddPlaylist, close: closeAddPlaylist },
   ] = useDisclosure(false);
 
+  // 検索関連
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [
+    searchVideoOpened,
+    { open: openSearchVideo, close: closeSearchVideo },
+  ] = useDisclosure(false);
+
+  const searchVideos = async (query) => {
+    if (!query || !process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY) return;
+    
+    setIsSearching(true);
+    setSearchResults([]);
+
+    const config = {
+      url: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API}/search`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      params: {
+        part: "snippet",
+        q: query,
+        type: "video",
+        maxResults: 20,
+        key: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY}`,
+      },
+    };
+
+    try {
+      const res = await axios(config);
+      setSearchResults(res.data.items || []);
+    } catch (error) {
+      console.error("Error searching videos:", error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   // localStorageから読み込み
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -479,5 +518,12 @@ export default function usePlaylist(mode) {
     closeAddPlaylist,
     newPlaylist,
     setNewPlaylist,
+    searchVideos,
+    searchResults,
+    setSearchResults,
+    isSearching,
+    searchVideoOpened,
+    openSearchVideo,
+    closeSearchVideo,
   };
 }

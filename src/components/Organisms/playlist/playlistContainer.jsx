@@ -11,6 +11,7 @@ import { TbPlayerTrackPrevFilled } from "react-icons/tb";
 import PlaylistAddVideoListModal from "../../Molecules/playlist/playlistAddVideoListModal";
 import { FaPlus, FaExpand, FaCompress, FaList } from "react-icons/fa6";
 import PlaylistAddModal from "../../Molecules/playlist/playlistAddModal";
+import PlaylistSearchModal from "../../Molecules/playlist/playlistSearchModal";
 
 export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaMode }) {
   const { workPlaylist } = useContext(PlaylistContext);
@@ -171,6 +172,15 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                     <div className="flex-shrink-0">
                       <PlaylistAddVideoListModal {...workPlaylist} />
                       <PlaylistAddVideoModal {...workPlaylist} />
+                      <PlaylistSearchModal
+                        opened={workPlaylist.searchVideoOpened}
+                        close={workPlaylist.closeSearchVideo}
+                        searchVideos={workPlaylist.searchVideos}
+                        searchResults={workPlaylist.searchResults}
+                        isSearching={workPlaylist.isSearching}
+                        addVideoToPlaylist={workPlaylist.addVideoToPlaylist}
+                        activePlaylist={workPlaylist.activePlaylist}
+                      />
                       <PlaylistAddModal {...workPlaylist} />
                     </div>
                   )}
@@ -181,6 +191,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                       isWorking={isWorking} 
                       tabMode="work" 
                       isMinimal={isCinemaMode}
+                      openSearchVideo={workPlaylist.openSearchVideo}
                     />
                   </div>
                 </div>
@@ -192,6 +203,15 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                     <div className="flex-shrink-0">
                       <PlaylistAddVideoListModal {...breakPlaylist} />
                       <PlaylistAddVideoModal {...breakPlaylist} />
+                      <PlaylistSearchModal
+                        opened={breakPlaylist.searchVideoOpened}
+                        close={breakPlaylist.closeSearchVideo}
+                        searchVideos={breakPlaylist.searchVideos}
+                        searchResults={breakPlaylist.searchResults}
+                        isSearching={breakPlaylist.isSearching}
+                        addVideoToPlaylist={breakPlaylist.addVideoToPlaylist}
+                        activePlaylist={breakPlaylist.activePlaylist}
+                      />
                       <PlaylistAddModal {...breakPlaylist} />
                     </div>
                   )}
@@ -202,6 +222,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                       isWorking={isWorking} 
                       tabMode="break"
                       isMinimal={isCinemaMode}
+                      openSearchVideo={breakPlaylist.openSearchVideo}
                     />
                   </div>
                 </div>
