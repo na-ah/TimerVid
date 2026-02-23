@@ -10,6 +10,13 @@ TimerVid is a productivity web application that combines a Pomodoro timer with Y
 - **Responsive Layout:** Tablet/Desktop optimized with a "Cinema Mode" for immersive viewing.
 - **Audio Feedback:** Sound effects for timer events.
 
+## Documentation
+For detailed implementation guides and architecture, refer to the `docs/` directory:
+
+- [Architecture & Design](docs/ARCHITECTURE.md): Directory structure, tech stack, and design patterns.
+- [State Management](docs/STATE_MANAGEMENT.md): Detailed map of Jotai Atoms, Context providers, and data flow.
+- [Component Catalog](docs/COMPONENT_CATALOG.md): Overview of key UI components (Organisms, Molecules, Atoms).
+
 ## Tech Stack
 - **Framework:** [Next.js](https://nextjs.org/) (v14, Pages Router)
 - **Language:** JavaScript (ES6+) / React (v18)
@@ -18,44 +25,6 @@ TimerVid is a productivity web application that combines a Pomodoro timer with Y
 - **Video:** `react-youtube` wrapper for YouTube IFrame API.
 - **Icons:** `react-icons` (FontAwesome 6, etc.)
 
-## Directory Structure
-The project follows a hybrid structure combining Next.js conventions with Atomic Design.
-
-```
-src/
-├── assets/          # Static assets (mp3, etc.)
-├── atoms/           # Jotai global state definitions (atoms.ts)
-├── components/      # Atomic Design UI Components
-│   ├── Atoms/       # Basic building blocks (buttons, raw inputs)
-│   ├── Molecules/   # Compound components (Player, PlaylistTabs)
-│   ├── Organisms/   # Complex sections (Header, PlaylistContainer, PlayerContainer)
-│   ├── Templates/   # Page layouts (TimerVid.jsx)
-│   └── ui/          # Reusable UI components (shadcn/ui based)
-├── context/         # React Context Providers (TimerProvider, PlaylistProvider)
-├── hooks/           # Custom React Hooks (usePlayer, useTimer, usePlaylist)
-├── lib/             # Utilities (utils.js)
-├── pages/           # Next.js Pages & API Routes
-└── styles/          # Global CSS (Tailwind directives)
-```
-
-## Key Modules & Logic
-
-### 1. Timer Logic
-- **Context:** `TimerContext` (`src/context/timerProvider.jsx`) manages the high-level timer state (Work vs Break, cycles).
-- **Hook:** `useTimer` (`src/hooks/useTimer.jsx`) handles the countdown logic, intervals, and switching.
-- **UI:** `TimersWithControllerContainer` orchestrates the timer display and controls.
-
-### 2. Player & Video
-- **Hook:** `usePlayer` (`src/hooks/usePlayer.jsx`) wraps the YouTube Player API. It exposes a `controller` function for actions (`play`, `pause`, `setVolume`, `toggleMute`).
-- **Container:** `PlayerContainer` (`src/components/Organisms/player/playerContainer.jsx`) renders the video.
-    - **Cinema Mode:** A responsive layout toggle that expands the video player (~75% width) and shrinks the playlist.
-    - **Custom Controls:** A stylish control bar below the video with Play/Pause, Next/Prev, and Volume controls.
-
-### 3. Playlist Management
-- **Context:** `PlaylistContext` (`src/context/playlistProvider.jsx`) manages the lists of videos for Work/Break modes.
-- **Storage:** Persists playlists to `localStorage`.
-- **UI:** `PlaylistContainer` (`src/components/Organisms/playlist/playlistContainer.jsx`) handles the split-pane layout and tabs for switching playlists.
-
 ## Development Workflow
 
 ### Prerequisites
@@ -63,23 +32,10 @@ src/
 - npm or yarn
 
 ### Commands
-- **Install Dependencies:**
-  ```bash
-  npm install
-  ```
-- **Start Development Server:**
-  ```bash
-  npm run dev
-  ```
-  Access at `http://localhost:3000`.
-- **Build for Production:**
-  ```bash
-  npm run build
-  ```
-- **Linting:**
-  ```bash
-  npm run lint
-  ```
+- **Install Dependencies:** `npm install`
+- **Start Development Server:** `npm run dev` (http://localhost:3000)
+- **Build for Production:** `npm run build`
+- **Linting:** `npm run lint`
 
 ## Conventions
 - **Component Design:** Prefer Atomic Design principles. Small, stateless components in `Atoms`/`Molecules`, stateful business logic in `Organisms` or `Context`.
