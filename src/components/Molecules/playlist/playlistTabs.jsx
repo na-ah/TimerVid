@@ -57,9 +57,11 @@ export default function PlaylistTabs(props) {
               className={isMinimal ? "w-full pl-2 h-full flex flex-col" : "ml-0 sm:ml-5 flex-1 min-w-0 flex flex-col"}
             >
               {!isMinimal ? (
-                <div className="flex flex-col xl:flex-row justify-between xl:items-center mt-3 mb-5 gap-3">
-                  <div className="flex items-center gap-2 flex-wrap min-w-0">
-                    <h1 className="text-xl sm:text-2xl font-bold m-0 truncate">{activePlaylist}</h1>
+                <div className="flex items-center justify-between mt-3 mb-5 gap-3">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <h1 className="text-xl sm:text-2xl font-bold m-0 truncate" title={activePlaylist}>
+                      {activePlaylist}
+                    </h1>
                     {canDeletePlaylist && isWorking === (tabMode === "work") && (
                       <ActionIcon
                         color="red"
@@ -68,23 +70,23 @@ export default function PlaylistTabs(props) {
                         onClick={() => {
                           if (removePlaylist) removePlaylist();
                         }}
-                        className="mt-1 flex-shrink-0"
+                        className="flex-shrink-0"
                       >
                         <FaTrash size={16} />
                       </ActionIcon>
                     )}
                   </div>
                   
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex gap-2 flex-shrink-0">
                     <Button
                       variant="light"
                       color="teal"
                       size="sm"
                       leftSection={<FaSearch />}
                       onClick={openSearchVideo}
-                      className="flex-shrink-0"
+                      className="px-2 sm:px-3"
                     >
-                      検索
+                      <span className="hidden sm:inline">検索</span>
                     </Button>
                     <Button
                       id="tutorial3-1"
@@ -93,9 +95,9 @@ export default function PlaylistTabs(props) {
                       size="sm"
                       leftSection={<FaPlus />}
                       onClick={openAddVideo}
-                      className="flex-shrink-0"
+                      className="px-2 sm:px-3"
                     >
-                      動画を追加
+                      <span className="hidden sm:inline">動画を追加</span>
                     </Button>
                     <Button
                       id="tutorial5-1"
@@ -104,9 +106,9 @@ export default function PlaylistTabs(props) {
                       size="sm"
                       leftSection={<RiPlayListAddFill />}
                       onClick={openAddVideoList}
-                      className="flex-shrink-0"
+                      className="px-2 sm:px-3"
                     >
-                      一括追加
+                      <span className="hidden sm:inline">一括追加</span>
                     </Button>
                   </div>
                 </div>
