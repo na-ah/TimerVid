@@ -47,15 +47,15 @@ export default function TimerVid() {
               )}
               <PlaylistProvider>
                 {!isCinemaMode && (
-                  <div className={`transition-all duration-500 pointer-events-auto flex flex-col ${isAmbientMode ? 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/40 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/10 w-[90%] max-w-2xl' : ''}`}>
+                  <div className={`transition-all duration-500 pointer-events-auto flex flex-col z-20 ${isAmbientMode ? 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#16191e]/80 backdrop-blur-xl p-8 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 w-[95%] max-w-3xl' : ''}`}>
                     {isAmbientMode && (
-                      <div className="flex justify-end mb-4">
+                      <div className="flex justify-end mb-6">
                         <Button
                           leftSection={<FaCompress size={14} />}
-                          variant="subtle"
+                          variant="light"
                           color="gray"
                           onClick={() => setIsAmbientMode(false)}
-                          className="text-zinc-300 hover:text-white hover:bg-white/10 transition-colors rounded-lg"
+                          className="text-zinc-300 hover:text-white hover:bg-white/10 transition-colors rounded-lg bg-white/5"
                         >
                           アンビエントモードを終了
                         </Button>
@@ -67,34 +67,21 @@ export default function TimerVid() {
                   </div>
                 )}
 
-                {!isAmbientMode && (
-                  <div className={`pointer-events-auto flex-1 flex flex-col`}>
-                    <PlaylistContainer
+                {/* We render ONLY ONE PlaylistContainer/PlayerContainer. In ambient mode, it's pushed to the background. */}
+                <div className={`pointer-events-auto ${isAmbientMode ? 'absolute inset-0 -z-10 overflow-hidden scale-[1.15] blur-[8px]' : 'flex-1 flex flex-col'}`}>
+                  {isAmbientMode && <div className="absolute inset-0 bg-black/60 z-10 pointer-events-none" />}
+                  
+                  <PlaylistContainer
+                    isCinemaMode={isCinemaMode}
+                    setIsCinemaMode={setIsCinemaMode}
+                  >
+                    <PlayerContainer
                       isCinemaMode={isCinemaMode}
                       setIsCinemaMode={setIsCinemaMode}
-                    >
-                      <PlayerContainer
-                        isCinemaMode={isCinemaMode}
-                        setIsCinemaMode={setIsCinemaMode}
-                        isAmbientMode={false}
-                      />
-                    </PlaylistContainer>
-                  </div>
-                )}
-
-                {/* Ambient Mode Background Player Container */}
-                {isAmbientMode && (
-                  <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-                    <div className="absolute inset-0 bg-black/50 z-10" /> {/* Dimming overlay */}
-                    <div className="absolute inset-[-10%] z-0 blur-[8px] scale-110 pointer-events-none">
-                       <PlayerContainer
-                          isCinemaMode={false}
-                          setIsCinemaMode={setIsCinemaMode}
-                          isAmbientMode={true}
-                        />
-                    </div>
-                  </div>
-                )}
+                      isAmbientMode={isAmbientMode}
+                    />
+                  </PlaylistContainer>
+                </div>
               </PlaylistProvider>
             </div>
           </div>
