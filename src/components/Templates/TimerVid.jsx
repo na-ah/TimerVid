@@ -21,13 +21,13 @@ export default function TimerVid() {
             ? "bg-[#0f1115] text-zinc-100 dark" 
             : "bg-white text-zinc-900"
         }`}>
-          <div className="max-w-[1920px] mx-auto">
+          <div className="max-w-[1920px] mx-auto h-dvh flex flex-col">
             <Toaster />
             {!isCinemaMode && (
               <Header setIsShowTutorial={setIsShowTutorial} />
             )}
             
-            <div className={`px-4 ${isCinemaMode ? "py-2" : "py-4"}`}>
+            <div className={`flex-1 flex flex-col ${isCinemaMode ? "p-4 sm:p-6" : "px-4 py-4"}`}>
               {!isCinemaMode && (
                 <TutorialContainer
                   isShowTutorial={isShowTutorial}

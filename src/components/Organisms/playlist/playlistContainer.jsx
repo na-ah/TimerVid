@@ -89,7 +89,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
         </div>
       </Modal>
 
-      <div className={`flex flex-col w-full transition-all duration-500 ${isCinemaMode ? "h-[calc(100dvh-40px)]" : ""}`}>
+      <div className={`flex flex-col w-full transition-all duration-500 ${isCinemaMode ? "flex-1 h-full min-h-0" : ""}`}>
         
         {/* Cinema Mode Header */}
         {isCinemaMode && (
