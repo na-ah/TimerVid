@@ -6,7 +6,7 @@ import { isPlayingAtom, playerAtom } from "../../../atoms/atoms";
 import { useContext, useState, useEffect } from "react";
 import { PlaylistContext } from "../../../context/playlistProvider";
 
-export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
+export default function PlayerContainer({ isCinemaMode, setIsCinemaMode, isAmbientMode }) {
   const { opts, onReady, onEnd, onError, onStateChange, controller, volume, isMuted } = usePlayer();
   const isPlaying = useAtomValue(isPlayingAtom);
   const player = useAtomValue(playerAtom);
@@ -52,6 +52,21 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
     if (volume < 50) return <FaVolumeLow size={size} />;
     return <FaVolumeHigh size={size} />;
   };
+
+  if (isAmbientMode) {
+     return (
+        <div className="w-full h-full flex items-center justify-center relative [&>div]:w-full [&>div]:h-full [&>div>iframe]:w-full [&>div>iframe]:h-full pointer-events-none opacity-80">
+          <Player
+            opts={{...opts, playerVars: { ...opts.playerVars, controls: 0 }}}
+            onReady={onReady}
+            onEnd={onEnd}
+            onError={onError}
+            onStateChange={onStateChange}
+            className="w-full h-full object-cover scale-[1.5]"
+          />
+        </div>
+     );
+  }
 
   return (
     <div className={`flex w-full overflow-hidden transition-all duration-500 ${isCinemaMode ? "flex-col rounded-2xl shadow-2xl bg-[#0f1115] border border-white/5 h-full" : "h-[120px] bg-zinc-900 rounded-xl shadow-md border border-zinc-800"}`}>
