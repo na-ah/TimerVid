@@ -24,15 +24,20 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
     return (
       <div className="w-full flex flex-col rounded-2xl overflow-hidden shadow-2xl bg-[#0f1115] border border-white/5 h-full">
         <div className="relative w-full bg-black flex-1 flex flex-col items-center justify-center overflow-hidden group min-h-[200px]">
-          <div className="relative w-full max-h-full aspect-video flex items-center justify-center transform transition-transform duration-700 group-hover:scale-[1.01]">
-            <Player
-              opts={opts}
-              onReady={onReady}
-              onEnd={onEnd}
-              onError={onError}
-              onStateChange={onStateChange}
-              className="w-full h-full"
-            />
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center transform transition-transform duration-700 group-hover:scale-[1.01]">
+            {/* The YouTube iframe will expand to cover the maximum area. 
+                We use aspect-video if we want to ensure no clipping, but to "fill" space, 
+                we can let it span full w and h. We rely on CSS to center it. */}
+            <div className="w-full h-full flex items-center justify-center relative [&>div]:w-full [&>div]:h-full [&>div>iframe]:w-full [&>div>iframe]:h-full">
+              <Player
+                opts={opts}
+                onReady={onReady}
+                onEnd={onEnd}
+                onError={onError}
+                onStateChange={onStateChange}
+                className="w-full h-full pointer-events-auto"
+              />
+            </div>
             
             {!isPlaying && (
               <div 
