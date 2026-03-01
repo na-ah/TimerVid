@@ -72,10 +72,47 @@ export default function usePlaylist(mode) {
 
     try {
       const res = await axios(config);
+      let items = res.data.items || [];
+      
+      // 動画の長さを取得するため、videoIDのカンマ区切り文字列を作成
+      const videoIds = items.map(item => item.id.videoId).join(',');
+      
+      if (videoIds) {
+        const detailsConfig = {
+          url: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API}/videos`,
+          method: "GET",
+          params: {
+            part: "contentDetails",
+            id: videoIds,
+            key: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY}`,
+          },
+        };
+        const detailsRes = await axios(detailsConfig);
+        const detailsMap = {};
+        if (detailsRes.data.items) {
+          detailsRes.data.items.forEach(detail => {
+            const duration = Duration.fromISO(detail.contentDetails.duration);
+            let formattedDuration = "0:00";
+            if (duration.hours === 0) {
+              formattedDuration = duration.toFormat("m:ss");
+            } else {
+              formattedDuration = duration.toFormat("h:mm:ss");
+            }
+            detailsMap[detail.id] = formattedDuration;
+          });
+        }
+        
+        // itemsにフォーマット済みのdurationを追加
+        items = items.map(item => ({
+          ...item,
+          durationFormatted: detailsMap[item.id.videoId] || "不明",
+        }));
+      }
+
       if (pageToken) {
-        setSearchResults((prev) => [...prev, ...(res.data.items || [])]);
+        setSearchResults((prev) => [...prev, ...items]);
       } else {
-        setSearchResults(res.data.items || []);
+        setSearchResults(items);
       }
       setNextPageToken(res.data.nextPageToken || "");
     } catch (error) {

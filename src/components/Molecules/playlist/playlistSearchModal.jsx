@@ -1,5 +1,5 @@
 import { Modal, TextInput, Button, ScrollArea, Group, Text, Loader, Stack, Select, Center } from "@mantine/core";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaPlus, FaPlay, FaXmark } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import axios from "axios";
@@ -25,13 +25,31 @@ export default function PlaylistSearchModal(props) {
   const [previewVideoId, setPreviewVideoId] = useState(null);
   const [sortOrder, setSortOrder] = useState("relevance");
   const mainPlayer = useAtomValue(playerAtom);
+  const wasMainPlayerPlaying = useRef(false);
 
-  // プレビュー開始時にメインプレイヤーを一時停止
+  // プレビュー開始時にメインプレイヤーを一時停止し、終了時に再開する
   useEffect(() => {
-    if (previewVideoId && mainPlayer && mainPlayer.getPlayerState() === 1) {
-      mainPlayer.pauseVideo();
+    if (previewVideoId) {
+      if (mainPlayer && mainPlayer.getPlayerState() === 1) {
+        wasMainPlayerPlaying.current = true;
+        mainPlayer.pauseVideo();
+      } else {
+        wasMainPlayerPlaying.current = false;
+      }
+    } else {
+      if (wasMainPlayerPlaying.current && mainPlayer) {
+        mainPlayer.playVideo();
+        wasMainPlayerPlaying.current = false;
+      }
     }
   }, [previewVideoId, mainPlayer]);
+
+  // モーダルが閉じられた時もプレビュー状態をリセットし、メインプレイヤーを必要なら再開する
+  useEffect(() => {
+    if (!opened && previewVideoId) {
+      setPreviewVideoId(null); // This will trigger the effect above to resume playing if needed
+    }
+  }, [opened]);
 
   const handleSearch = (e) => {
     e?.preventDefault();
@@ -47,28 +65,31 @@ export default function PlaylistSearchModal(props) {
     const videoId = video.id.videoId;
     setAddingId(videoId);
 
-    // 長さを取得
-    let length = "0:00";
-    try {
-      const config = {
-        url: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API}/videos`,
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-        },
-        params: {
-          part: "contentDetails",
-          id: videoId,
-          key: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY}`,
-        },
-      };
-      const res = await axios(config);
-      if (res.data.items && res.data.items.length > 0) {
-        const duration = Duration.fromISO(res.data.items[0].contentDetails.duration);
-        length = duration.hours === 0 ? duration.toFormat("m:ss") : duration.toFormat("h:mm:ss");
+    // 長さはすでにフォーマット済みであればそれを使う
+    let length = video.durationFormatted || "0:00";
+    
+    if (length === "不明" || length === "0:00") {
+      try {
+        const config = {
+          url: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API}/videos`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          },
+          params: {
+            part: "contentDetails",
+            id: videoId,
+            key: `${process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY}`,
+          },
+        };
+        const res = await axios(config);
+        if (res.data.items && res.data.items.length > 0) {
+          const duration = Duration.fromISO(res.data.items[0].contentDetails.duration);
+          length = duration.hours === 0 ? duration.toFormat("m:ss") : duration.toFormat("h:mm:ss");
+        }
+      } catch (error) {
+        console.error("Error fetching video details:", error);
       }
-    } catch (error) {
-      console.error("Error fetching video details:", error);
     }
 
     addVideoToPlaylist(videoId, video.snippet.title, length, activePlaylist);
@@ -153,6 +174,9 @@ export default function PlaylistSearchModal(props) {
                         alt={video.snippet.title}
                         className="w-full h-full object-cover"
                       />
+                      <div className="absolute bottom-1 right-1 bg-black/80 text-white text-[10px] px-1 rounded font-medium tracking-wide">
+                        {video.durationFormatted || "--:--"}
+                      </div>
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-all">
                           <FaPlay className="text-white opacity-0 group-hover:opacity-100 drop-shadow-md" />
                       </div>
