@@ -210,9 +210,25 @@ export default function usePlayer() {
     // If the app expects it to be playing, automatically resume it.
     if (state === 2 && isPlayingRef.current) {
       console.warn("Video paused unexpectedly. Resuming...");
+      const playerInstance = event.target;
       setTimeout(() => {
-        if (player) player.playVideo();
-      }, 1000);
+        playerInstance.playVideo();
+        
+        // If playVideo() doesn't work (e.g., blocked by YouTube's "Continue watching?" prompt),
+        // reload the video at the current time to force resume.
+        setTimeout(() => {
+          if (playerInstance.getPlayerState() === 2) {
+            console.warn("Force reloading video to bypass pause...");
+            const currentTime = playerInstance.getCurrentTime();
+            const videoData = playerInstance.getVideoData();
+            const vidId = (videoData && videoData.video_id) ? videoData.video_id : currentVideoId;
+            playerInstance.loadVideoById({
+              videoId: vidId,
+              startSeconds: currentTime,
+            });
+          }
+        }, 2000);
+      }, 500);
     }
     
     // If user manually clicked play on the iframe, update our intended state
