@@ -11,7 +11,7 @@ import { PlaylistContext } from "@/context/playlistProvider";
 import { useAtomValue } from "jotai";
 import { isTimerVisibleAtom } from "@/atoms/atoms";
 
-export default function TimersWithControllerContainer() {
+export default function TimersWithControllerContainer({ isAmbientMode = false }) {
   const isTimerVisible = useAtomValue(isTimerVisibleAtom);
   const { controller } = usePlayer();
   const { resetStatus } = useContext(PlaylistContext);
@@ -59,19 +59,23 @@ export default function TimersWithControllerContainer() {
 
   return (
     <>
-      <div>
-        <div className="flex justify-between items-center">
-          <div className="my-3 w-full grid grid-cols-[10%_1fr] items-center">
-            <div className="text-center">
-              {totalCycleCount}/{totalCycle}
+      <div className={isAmbientMode ? "text-white" : ""}>
+        <div className="flex justify-between items-center mb-4">
+          <div className="w-full grid grid-cols-[auto_1fr] gap-4 items-center">
+            <div className={`font-bold ${isAmbientMode ? "text-white/90 text-lg" : "text-center"}`}>
+              {totalCycleCount} / {totalCycle}
             </div>
             <Progress
-              size="xs"
+              size="md"
+              radius="xl"
               value={(totalCycleCount / totalCycle) * 100}
+              color={isAmbientMode ? "indigo.3" : "blue"}
+              bg={isAmbientMode ? "rgba(255, 255, 255, 0.1)" : undefined}
             />
           </div>
-          <div className="flex justify-end basis-1/12">
+          <div className="flex justify-end pl-4">
             <button
+              className={`p-2 rounded-full transition-all ${isAmbientMode ? "hover:bg-white/10" : "hover:bg-zinc-100"}`}
               onClick={() => {
                 const isAnyTrue = [workTimer, breakTimer, longBreakTimer].some(
                   (timer) => timer.showSetting === true
@@ -81,17 +85,19 @@ export default function TimersWithControllerContainer() {
                 );
               }}
             >
-              <IoMdSettings className="text-xl text-zinc-500 hover:text-zinc-800" />
+              <IoMdSettings className={`text-2xl ${isAmbientMode ? "text-white/80 hover:text-white" : "text-zinc-500 hover:text-zinc-800"}`} />
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-3">
+        
+        <div className="grid grid-cols-3 gap-2">
           <TimerContainer
             timer={workTimer}
             label={"work"}
             totalCycle={totalCycle}
             setTotalCycle={setTotalCycle}
-            color={"#3e98c7"}
+            color={isAmbientMode ? "#818cf8" : "#3e98c7"}
+            isAmbientMode={isAmbientMode}
           />
           <TimerContainer
             timer={breakTimer}
@@ -104,49 +110,55 @@ export default function TimersWithControllerContainer() {
             longBreakTimerTotalTime={longBreakTimerTotalTime}
             totalRequiredTime={totalRequiredTime}
             breakCount={breakCount}
-            color={"#0d9488"}
+            color={isAmbientMode ? "#2dd4bf" : "#0d9488"}
+            isAmbientMode={isAmbientMode}
           />
           <TimerContainer
             timer={longBreakTimer}
             longBreakCycle={longBreakCycle}
             setLongBreakCycle={setLongBreakCycle}
             label={"long"}
-            color={"#f43f5e"}
+            color={isAmbientMode ? "#fb7185" : "#f43f5e"}
+            isAmbientMode={isAmbientMode}
           />
         </div>
+        
         <Button
           id="tutorial1-1"
           fullWidth
-          className="shadow-md my-3"
-          color="grape"
+          size={isAmbientMode ? "xl" : "md"}
+          radius="md"
+          className={`shadow-lg mt-6 mb-4 font-bold text-lg tracking-wide ${isAmbientMode ? "bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white" : ""}`}
+          color={isAmbientMode ? undefined : "grape"}
           onClick={() => {
             startTimer();
           }}
         >
-          play / pause
+          {workTimer.isRunning || breakTimer.isRunning || longBreakTimer.isRunning ? "Pause" : "Play"}
         </Button>
-        <div className="w-full mt-3 gap-3 grid grid-cols-3">
+        
+        <div className="w-full gap-3 grid grid-cols-3">
           <button
-            className="flex justify-center items-center gap-1 shadow-md  rounded-md"
+            className={`flex justify-center items-center gap-2 shadow-md rounded-xl py-3 font-medium transition-all ${isAmbientMode ? "bg-white/5 hover:bg-white/15 backdrop-blur-md border border-white/10 text-white/90 hover:text-white" : "bg-white hover:bg-zinc-50"}`}
             onClick={() => {
               clearTimer();
               resetStatus();
             }}
           >
-            <BiReset /> Reset
+            <BiReset size={20} /> Reset
           </button>
           <button
-            className="flex justify-center items-center gap-1 shadow-md  rounded-md"
+            className={`flex justify-center items-center gap-2 shadow-md rounded-xl py-3 font-medium transition-all ${isAmbientMode ? "bg-white/5 hover:bg-white/15 backdrop-blur-md border border-white/10 text-white/90 hover:text-white" : "bg-white hover:bg-zinc-50"}`}
             onClick={rewindTimer}
           >
-            <TbPlayerTrackPrevFilled /> Rewind
+            <TbPlayerTrackPrevFilled size={20} /> Rewind
           </button>
           <button
             id="tutorial4-1"
-            className="flex justify-center items-center gap-1 shadow-md  rounded-md"
+            className={`flex justify-center items-center gap-2 shadow-md rounded-xl py-3 font-medium transition-all ${isAmbientMode ? "bg-white/5 hover:bg-white/15 backdrop-blur-md border border-white/10 text-white/90 hover:text-white" : "bg-white hover:bg-zinc-50"}`}
             onClick={skipTimer}
           >
-            <TbPlayerTrackNextFilled /> Skip
+            <TbPlayerTrackNextFilled size={20} /> Skip
           </button>
         </div>
       </div>
