@@ -5,8 +5,8 @@ import { FaSearch } from "react-icons/fa";
 import axios from "axios";
 import { Duration } from "luxon";
 import YouTube from "react-youtube";
-import { useAtomValue } from "jotai";
-import { playerAtom } from "../../../atoms/atoms";
+import { useAtom, useAtomValue } from "jotai";
+import { playerAtom, isPlayingAtom } from "../../../atoms/atoms";
 
 export default function PlaylistSearchModal(props) {
   const {
@@ -25,24 +25,27 @@ export default function PlaylistSearchModal(props) {
   const [previewVideoId, setPreviewVideoId] = useState(null);
   const [sortOrder, setSortOrder] = useState("relevance");
   const mainPlayer = useAtomValue(playerAtom);
+  const [isPlaying, setIsPlaying] = useAtom(isPlayingAtom);
   const wasMainPlayerPlaying = useRef(false);
 
   // プレビュー開始時にメインプレイヤーを一時停止し、終了時に再開する
   useEffect(() => {
     if (previewVideoId) {
-      if (mainPlayer && mainPlayer.getPlayerState() === 1) {
+      if (mainPlayer && mainPlayer.getPlayerState && mainPlayer.getPlayerState() === 1) {
         wasMainPlayerPlaying.current = true;
+        setIsPlaying(false); // isPlayingをfalseにしないと、usePlayer内の自動再開ロジックが働いてしまう
         mainPlayer.pauseVideo();
       } else {
         wasMainPlayerPlaying.current = false;
       }
     } else {
-      if (wasMainPlayerPlaying.current && mainPlayer) {
+      if (wasMainPlayerPlaying.current && mainPlayer && mainPlayer.playVideo) {
+        setIsPlaying(true);
         mainPlayer.playVideo();
         wasMainPlayerPlaying.current = false;
       }
     }
-  }, [previewVideoId, mainPlayer]);
+  }, [previewVideoId, mainPlayer, setIsPlaying]);
 
   // モーダルが閉じられた時もプレビュー状態をリセットし、メインプレイヤーを必要なら再開する
   useEffect(() => {
