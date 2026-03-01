@@ -503,6 +503,29 @@ export default function usePlaylist(mode) {
     }
   };
 
+  const renamePlaylist = (oldTitle, newTitle) => {
+    if (!newTitle || newTitle.trim() === "" || newTitle === oldTitle) return;
+    
+    // Check if a playlist with the new title already exists
+    if (playlists.some((p) => p.title === newTitle)) {
+      alert("既に同じ名前のプレイリストが存在します。");
+      return;
+    }
+
+    setPlaylists((prevPlaylists) => {
+      return prevPlaylists.map((playlist) => {
+        if (playlist.title === oldTitle) {
+          return { ...playlist, title: newTitle };
+        }
+        return playlist;
+      });
+    });
+
+    if (activePlaylist === oldTitle) {
+      setActivePlaylist(newTitle);
+    }
+  };
+
   const removeVideoFromPlaylist = (videoIdToRemove, playlistTitle) => {
     if (window.confirm("この動画をプレイリストから削除してもよろしいですか？")) {
       setPlaylists((prevPlaylists) => {
@@ -559,6 +582,7 @@ export default function usePlaylist(mode) {
     extractPlaylistId,
     addNewPlaylist,
     removePlaylist,
+    renamePlaylist,
     removeVideoFromPlaylist,
     addPlaylistOpened,
     openAddPlaylist,

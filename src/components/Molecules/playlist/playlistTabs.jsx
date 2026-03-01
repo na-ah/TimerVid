@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, Tabs, ActionIcon, Button, Group } from "@mantine/core";
-import { FaPlus, FaTrash, FaPlay } from "react-icons/fa6";
+import { FaPlus, FaTrash, FaPlay, FaPen } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { RiPlayListAddFill } from "react-icons/ri";
 
@@ -17,6 +17,7 @@ export default function PlaylistTabs(props) {
     currentVideoIndex,
     removeVideoFromPlaylist,
     removePlaylist,
+    renamePlaylist, // New prop
     isWorking,
     tabMode,
     isMinimal, // New prop for Cinema Mode
@@ -62,6 +63,21 @@ export default function PlaylistTabs(props) {
                     <h1 className="text-xl sm:text-2xl font-bold m-0 truncate" title={activePlaylist}>
                       {activePlaylist}
                     </h1>
+                    {isWorking === (tabMode === "work") && (
+                      <ActionIcon
+                        variant="subtle"
+                        title="プレイリスト名を変更"
+                        onClick={() => {
+                          const newName = window.prompt("新しいプレイリスト名を入力してください", activePlaylist);
+                          if (newName) {
+                            if (renamePlaylist) renamePlaylist(activePlaylist, newName);
+                          }
+                        }}
+                        className="flex-shrink-0 text-zinc-400 hover:text-zinc-600"
+                      >
+                        <FaPen size={14} />
+                      </ActionIcon>
+                    )}
                     {canDeletePlaylist && isWorking === (tabMode === "work") && (
                       <ActionIcon
                         color="red"

@@ -82,15 +82,6 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
             </div>
           )}
 
-          {/* Title Overlay in Player (Top Left) - Always visible on hover or paused in cinema mode */}
-          {isCinemaMode && (
-            <div className={`absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none z-20 ${isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
-              <h2 className="text-2xl font-bold text-white/95 truncate drop-shadow-lg">
-                {currentTitle || "No Video"}
-              </h2>
-            </div>
-          )}
-
         </div>
       </div>
 
@@ -191,12 +182,11 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
           </button>
 
           {/* Title */}
-          <div className="w-full pr-16"> {/* Avoid overlap with toggle button */}
+          <div className="w-full pr-24"> {/* Avoid overlap with toggle button */}
             <h3 className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight" title={currentTitle}>
               {currentTitle || "動画が選択されていません"}
             </h3>
           </div>
-
           {/* Controls Row */}
           <div className="flex items-center justify-between gap-3 mt-1">
             {/* Playback Controls */}

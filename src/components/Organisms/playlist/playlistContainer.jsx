@@ -224,6 +224,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                     <PlaylistTabs 
                       {...workPlaylist} 
                       removePlaylist={removePlaylist} 
+                      renamePlaylist={workPlaylist.renamePlaylist}
                       isWorking={isWorking} 
                       tabMode="work" 
                       isMinimal={isCinemaMode}
@@ -256,6 +257,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
                     <PlaylistTabs 
                       {...breakPlaylist} 
                       removePlaylist={removePlaylist} 
+                      renamePlaylist={breakPlaylist.renamePlaylist}
                       isWorking={isWorking} 
                       tabMode="break"
                       isMinimal={isCinemaMode}
