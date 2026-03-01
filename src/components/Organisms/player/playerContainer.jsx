@@ -23,36 +23,37 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
   if (isCinemaMode) {
     return (
       <div className="w-full flex flex-col rounded-2xl overflow-hidden shadow-2xl bg-[#0f1115] border border-white/5 h-full">
-        <div className={`relative w-full bg-black aspect-video group max-h-[calc(100vh-280px)] overflow-hidden`}>
-          <div className="flex justify-center w-full h-full transform transition-transform duration-700 group-hover:scale-[1.01]">
+        <div className="relative w-full bg-black flex-1 flex flex-col items-center justify-center overflow-hidden group min-h-[200px]">
+          <div className="relative w-full max-h-full aspect-video flex items-center justify-center transform transition-transform duration-700 group-hover:scale-[1.01]">
             <Player
               opts={opts}
               onReady={onReady}
               onEnd={onEnd}
               onError={onError}
               onStateChange={onStateChange}
+              className="w-full h-full"
             />
-          </div>
-          
-          {!isPlaying && (
-            <div 
-              className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer backdrop-blur-sm transition-all duration-500 opacity-100 hover:bg-black/30"
-              onClick={() => controller({ type: "play" })}
-            >
-              <div className="bg-white/10 rounded-full backdrop-blur-xl border border-white/20 shadow-[0_0_50px_rgba(99,102,241,0.2)] hover:scale-110 hover:bg-white/20 transition-all duration-300 p-8">
-                <FaPlay size={48} className="text-white ml-1 drop-shadow-lg" />
+            
+            {!isPlaying && (
+              <div 
+                className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer backdrop-blur-sm transition-all duration-500 opacity-100 hover:bg-black/30 z-20"
+                onClick={() => controller({ type: "play" })}
+              >
+                <div className="bg-white/10 rounded-full backdrop-blur-xl border border-white/20 shadow-[0_0_50px_rgba(99,102,241,0.2)] hover:scale-110 hover:bg-white/20 transition-all duration-300 p-8">
+                  <FaPlay size={48} className="text-white ml-1 drop-shadow-lg" />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Title Overlay in Player (Top Left) */}
-          {isPlaying && (
-            <div className="absolute top-0 left-0 right-0 p-8 bg-gradient-to-b from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-              <h2 className="text-xl font-medium text-white/90 truncate drop-shadow-md">
-                {currentTitle}
-              </h2>
-            </div>
-          )}
+            {/* Title Overlay in Player (Top Left) */}
+            {isPlaying && (
+              <div className="absolute top-0 left-0 right-0 p-8 bg-gradient-to-b from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+                <h2 className="text-xl font-medium text-white/90 truncate drop-shadow-md">
+                  {currentTitle}
+                </h2>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 flex flex-col bg-[#16191e]/80 backdrop-blur-xl border-t border-white/5 relative z-10 p-4">
