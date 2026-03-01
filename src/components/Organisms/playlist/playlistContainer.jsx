@@ -13,7 +13,7 @@ import { FaPlus, FaExpand, FaCompress, FaList, FaPlay } from "react-icons/fa6";
 import PlaylistAddModal from "../../Molecules/playlist/playlistAddModal";
 import PlaylistSearchModal from "../../Molecules/playlist/playlistSearchModal";
 
-export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaMode }) {
+export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaMode, isAmbientMode }) {
   const { workPlaylist } = useContext(PlaylistContext);
   const { breakPlaylist } = useContext(PlaylistContext);
   const {
@@ -89,10 +89,10 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
         </div>
       </Modal>
 
-      <div className={`flex flex-col w-full transition-all duration-500 ${isCinemaMode ? "flex-1 h-full min-h-0" : ""}`}>
+      <div className={`flex flex-col w-full transition-all duration-500 ${isCinemaMode || isAmbientMode ? "flex-1 h-full min-h-0" : ""}`}>
         
         {/* Cinema Mode Header */}
-        {isCinemaMode && (
+        {isCinemaMode && !isAmbientMode && (
           <div className="flex items-center justify-between mb-6 w-full px-2 flex-shrink-0">
             <Button 
               leftSection={<FaCompress size={14} />} 
@@ -125,17 +125,19 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
           </div>
         )}
 
-        <div className={`flex w-full items-start flex-1 overflow-hidden transition-all duration-700 ease-in-out ${isCinemaMode ? "flex-col lg:flex-row gap-8" : "flex-col gap-4"}`}>
+        <div className={`flex w-full items-start flex-1 overflow-hidden transition-all duration-700 ease-in-out ${isAmbientMode ? "flex-col h-full" : isCinemaMode ? "flex-col lg:flex-row gap-8" : "flex-col gap-4"}`}>
           {/* Left Column: Player & Current Info */}
           <div
             className={`flex flex-col w-full transition-all duration-500 ease-in-out ${
+              isAmbientMode ? "h-full w-full" :
               isCinemaMode ? "h-full lg:w-[72%]" : "shrink-0"
             }`}
           >
             {/* Player Container */}
-            <div className={`w-full overflow-hidden flex-shrink-0 ${
+            <div className={`w-full h-full overflow-hidden flex-shrink-0 ${
+              isAmbientMode ? "" :
               isCinemaMode 
-                ? "h-full flex flex-col rounded-2xl shadow-2xl shadow-black/50" 
+                ? "flex flex-col rounded-2xl shadow-2xl shadow-black/50" 
                 : "rounded-xl shadow-lg"
             }`}>
               {children}
@@ -143,6 +145,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
           </div>
 
           {/* Right Column: Playlist Selection */}
+          {!isAmbientMode && (
           <div
             className={`w-full flex flex-col transition-all duration-500 ease-in-out ${
               isCinemaMode ? "h-full lg:w-[28%]" : "flex-1 overflow-hidden"
@@ -269,6 +272,7 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
             </Tabs>
             </div>
           </div>
+          )}
         </div>
       </div>
     </>
