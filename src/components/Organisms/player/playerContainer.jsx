@@ -53,46 +53,49 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
     return <FaVolumeHigh size={size} />;
   };
 
-  // Cinema Mode Layout (Existing)
-  if (isCinemaMode) {
-    return (
-      <div className="w-full flex flex-col rounded-2xl overflow-hidden shadow-2xl bg-[#0f1115] border border-white/5 h-full">
-        <div className="relative w-full bg-black flex-1 flex flex-col items-center justify-center overflow-hidden group min-h-[200px]">
-          <div className="absolute inset-0 w-full h-full flex items-center justify-center transform transition-transform duration-700 group-hover:scale-[1.01]">
-            {/* The YouTube iframe will expand to cover the maximum area. 
-                We use aspect-video if we want to ensure no clipping, but to "fill" space, 
-                we can let it span full w and h. We rely on CSS to center it. */}
-            <div className="w-full h-full flex items-center justify-center relative [&>div]:w-full [&>div]:h-full [&>div>iframe]:w-full [&>div>iframe]:h-full">
-              <Player
-                opts={opts}
-                onReady={onReady}
-                onEnd={onEnd}
-                onError={onError}
-                onStateChange={onStateChange}
-                className="w-full h-full pointer-events-auto"
-              />
-            </div>
-            
-            {!isPlaying && (
-              <div 
-                className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer backdrop-blur-sm transition-all duration-500 opacity-100 hover:bg-black/30 z-20"
-                onClick={() => controller({ type: "play" })}
-              >
-                <div className="bg-white/10 rounded-full backdrop-blur-xl border border-white/20 shadow-[0_0_50px_rgba(99,102,241,0.2)] hover:scale-110 hover:bg-white/20 transition-all duration-300 p-8">
-                  <FaPlay size={48} className="text-white ml-1 drop-shadow-lg" />
-                </div>
-              </div>
-            )}
+  return (
+    <div className={`flex w-full overflow-hidden transition-all duration-500 ${isCinemaMode ? "flex-col rounded-2xl shadow-2xl bg-[#0f1115] border border-white/5 h-full" : "h-[120px] bg-zinc-900 rounded-xl shadow-md border border-zinc-800"}`}>
+      
+      {/* Video Section */}
+      <div className={`relative bg-black group shrink-0 ${isCinemaMode ? "w-full flex-1 flex flex-col items-center justify-center overflow-hidden min-h-[200px]" : "h-full aspect-video"}`}>
+        <div className={`w-full h-full ${isCinemaMode ? "absolute inset-0 flex items-center justify-center transform transition-transform duration-700 group-hover:scale-[1.01]" : ""}`}>
+          
+          <div className={`w-full h-full ${isCinemaMode ? "flex items-center justify-center relative [&>div]:w-full [&>div]:h-full [&>div>iframe]:w-full [&>div>iframe]:h-full" : ""}`}>
+            <Player
+              opts={opts}
+              onReady={onReady}
+              onEnd={onEnd}
+              onError={onError}
+              onStateChange={onStateChange}
+              className={`w-full h-full ${isCinemaMode ? "pointer-events-auto" : ""}`}
+            />
+          </div>
 
-            {/* Title Overlay in Player (Top Left) - Always visible on hover or paused in cinema mode */}
+          {!isPlaying && (
+            <div 
+              className={`absolute inset-0 flex items-center justify-center cursor-pointer transition-all duration-500 z-20 ${isCinemaMode ? "bg-black/40 backdrop-blur-sm opacity-100 hover:bg-black/30" : "bg-black/30 hover:bg-black/40"}`}
+              onClick={() => controller({ type: "play" })}
+            >
+              <div className={`rounded-full backdrop-blur-sm border flex items-center justify-center transition-all duration-300 ${isCinemaMode ? "bg-white/10 backdrop-blur-xl border-white/20 shadow-[0_0_50px_rgba(99,102,241,0.2)] hover:scale-110 hover:bg-white/20 p-8" : "bg-white/20 border-white/30 p-2 shadow-lg"}`}>
+                <FaPlay size={isCinemaMode ? 48 : 16} className={`text-white ${isCinemaMode ? "ml-1 drop-shadow-lg" : "ml-0.5"}`} />
+              </div>
+            </div>
+          )}
+
+          {/* Title Overlay in Player (Top Left) - Always visible on hover or paused in cinema mode */}
+          {isCinemaMode && (
             <div className={`absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none z-20 ${isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
               <h2 className="text-2xl font-bold text-white/95 truncate drop-shadow-lg">
                 {currentTitle || "No Video"}
               </h2>
             </div>
-          </div>
-        </div>
+          )}
 
+        </div>
+      </div>
+
+      {/* Info & Controls Section */}
+      {isCinemaMode ? (
         <div className="flex-none flex flex-col bg-[#16191e]/90 backdrop-blur-xl border-t border-white/10 relative z-10 px-6 py-4">
           
           {/* Seek bar row */}
@@ -175,102 +178,73 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  // Normal Mode Layout (New: Media Object Style)
-  return (
-    <div className="flex w-full h-[120px] bg-zinc-900 rounded-xl overflow-hidden shadow-md border border-zinc-800">
-      {/* Video Section */}
-      <div className="relative h-full aspect-video bg-black shrink-0">
-        <div className="w-full h-full">
-          <Player
-            opts={opts}
-            onReady={onReady}
-            onEnd={onEnd}
-            onError={onError}
-            onStateChange={onStateChange}
-          />
-        </div>
-        {!isPlaying && (
-          <div 
-            className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer hover:bg-black/40 transition-colors"
-            onClick={() => controller({ type: "play" })}
+      ) : (
+        <div className="flex flex-col flex-1 p-3 justify-between min-w-0 bg-zinc-800/50 relative">
+          {/* Cinema Mode Toggle (Top Right) */}
+          <button
+            onClick={() => setIsCinemaMode(true)}
+            className="absolute top-2 right-2 flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white px-2 py-1 rounded hover:bg-white/10 transition-colors z-10"
+            title="シアターモードへ切り替え"
           >
-            <div className="bg-white/20 rounded-full backdrop-blur-sm border border-white/30 p-2 shadow-lg">
-              <FaPlay size={16} className="text-white ml-0.5" />
+            <span>シアター</span>
+            <FaExpand size={14} />
+          </button>
+
+          {/* Title */}
+          <div className="w-full pr-16"> {/* Avoid overlap with toggle button */}
+            <h3 className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight" title={currentTitle}>
+              {currentTitle || "動画が選択されていません"}
+            </h3>
+          </div>
+
+          {/* Controls Row */}
+          <div className="flex items-center justify-between gap-3 mt-1">
+            {/* Playback Controls */}
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={prevVideo}
+                className="text-zinc-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"
+              >
+                <FaBackwardStep size={14} />
+              </button>
+              <button
+                onClick={() => controller({ type: "play/pause" })}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-full p-2 shadow-md hover:scale-105 transition-all"
+              >
+                {isPlaying ? <FaPause size={14} /> : <FaPlay size={14} className="ml-0.5" />}
+              </button>
+              <button 
+                onClick={nextVideo}
+                className="text-zinc-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"
+              >
+                <FaForwardStep size={14} />
+              </button>
+            </div>
+
+            {/* Volume Controls */}
+            <div className="flex items-center gap-2 flex-1 max-w-[100px] justify-end">
+              <button
+                onClick={() => controller({ type: "toggleMute" })}
+                className="text-zinc-400 hover:text-white p-1"
+              >
+                {getVolumeIcon(14)}
+              </button>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={isMuted ? 0 : volume}
+                onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
+                className="w-full h-1 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400"
+                style={{ 
+                  WebkitAppearance: "none",
+                  background: `linear-gradient(to right, #6366f1 ${isMuted ? 0 : volume}%, #52525b ${isMuted ? 0 : volume}%)`
+                }}
+              />
             </div>
           </div>
-        )}
-      </div>
-
-      {/* Info & Controls Section */}
-      <div className="flex flex-col flex-1 p-3 justify-between min-w-0 bg-zinc-800/50 relative">
-        {/* Cinema Mode Toggle (Top Right) */}
-        <button
-          onClick={() => setIsCinemaMode(true)}
-          className="absolute top-2 right-2 flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white px-2 py-1 rounded hover:bg-white/10 transition-colors z-10"
-          title="シアターモードへ切り替え"
-        >
-          <span>シアター</span>
-          <FaExpand size={14} />
-        </button>
-
-        {/* Title */}
-        <div className="w-full pr-16"> {/* Avoid overlap with toggle button */}
-          <h3 className="text-sm font-medium text-zinc-200 line-clamp-2 leading-tight" title={currentTitle}>
-            {currentTitle || "動画が選択されていません"}
-          </h3>
         </div>
-
-        {/* Controls Row */}
-        <div className="flex items-center justify-between gap-3 mt-1">
-          {/* Playback Controls */}
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={prevVideo}
-              className="text-zinc-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"
-            >
-              <FaBackwardStep size={14} />
-            </button>
-            <button
-              onClick={() => controller({ type: "play/pause" })}
-              className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-full p-2 shadow-md hover:scale-105 transition-all"
-            >
-              {isPlaying ? <FaPause size={14} /> : <FaPlay size={14} className="ml-0.5" />}
-            </button>
-            <button 
-              onClick={nextVideo}
-              className="text-zinc-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"
-            >
-              <FaForwardStep size={14} />
-            </button>
-          </div>
-
-          {/* Volume Controls */}
-          <div className="flex items-center gap-2 flex-1 max-w-[100px] justify-end">
-            <button
-              onClick={() => controller({ type: "toggleMute" })}
-              className="text-zinc-400 hover:text-white p-1"
-            >
-              {getVolumeIcon(14)}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={isMuted ? 0 : volume}
-              onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
-              className="w-full h-1 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400"
-              style={{ 
-                WebkitAppearance: "none",
-                background: `linear-gradient(to right, #6366f1 ${isMuted ? 0 : volume}%, #52525b ${isMuted ? 0 : volume}%)`
-              }}
-            />
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
