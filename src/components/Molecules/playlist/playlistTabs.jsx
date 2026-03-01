@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, Tabs, ActionIcon, Button, Group } from "@mantine/core";
-import { FaPlus, FaTrash } from "react-icons/fa6";
+import { FaPlus, FaTrash, FaPlay } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { RiPlayListAddFill } from "react-icons/ri";
 
@@ -54,7 +54,7 @@ export default function PlaylistTabs(props) {
             <Tabs.Panel
               key={i}
               value={playlist.title}
-              className={isMinimal ? "w-full pl-2 h-full flex flex-col" : "ml-0 sm:ml-4 flex-1 min-w-0 flex flex-col"}
+              className={isMinimal ? "w-full h-full flex flex-col pt-2" : "ml-0 sm:ml-4 flex-1 min-w-0 flex flex-col"}
             >
               {!isMinimal ? (
                 <div className="flex flex-wrap items-center justify-between my-2 gap-2">
@@ -111,80 +111,80 @@ export default function PlaylistTabs(props) {
                 </div>
               ) : null}
 
-              <div className={`${isMinimal ? "flex-1 h-full" : "h-[300px]"} overflow-auto custom-scrollbar`}>
-                <Table
-                  stickyHeader
-                  highlightOnHover
-                  className={isMinimal ? "border-t border-white/5" : ""}
-                  layout="fixed"
-                >
-                  {!isMinimal && (
-                    <Table.Thead>
-                      <Table.Tr>
-                        <Table.Th className="text-center w-8">#</Table.Th>
-                        <Table.Th className="text-left w-auto">title</Table.Th>
-                        <Table.Th className="text-right w-16">len</Table.Th>
-                        <Table.Th className="text-center w-12"></Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                  )}
-                  <Table.Tbody>
-                    {videos.length > 0 &&
-                      playlist.videoIds.map((videoId, index) => {
-                        const video = videos.find(
-                          (item) => item.id === videoId
-                        );
-                        
-                        if (!video) return null;
+              <div className={`${isMinimal ? "flex-1 h-full pr-2" : "h-[300px]"} overflow-auto custom-scrollbar`}>
+                <div className="flex flex-col gap-2 pb-4">
+                  {videos.length > 0 &&
+                    playlist.videoIds.map((videoId, index) => {
+                      const video = videos.find(
+                        (item) => item.id === videoId
+                      );
+                      
+                      if (!video) return null;
 
-                        const isActive = currentVideoIndex === index;
+                      const isActive = currentVideoIndex === index;
 
-                        return (
-                          <Table.Tr
-                            key={`${video.id}-${index}`}
-                            onClick={() => setCurrentVideoId(video.id)}
-                            className={`cursor-pointer group border-b border-white/5 transition-colors ${
+                      return (
+                        <div
+                          key={`${video.id}-${index}`}
+                          onClick={() => setCurrentVideoId(video.id)}
+                          className={`group flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border ${
+                            isActive 
+                              ? (isMinimal ? "bg-indigo-600/20 border-indigo-500/50" : "bg-indigo-50 border-indigo-200") 
+                              : (isMinimal ? "bg-zinc-900/40 border-white/5 hover:bg-white/10 hover:border-white/10" : "bg-white border-transparent hover:bg-zinc-50 hover:border-zinc-200")
+                          }`}
+                        >
+                          <div className={`relative shrink-0 overflow-hidden rounded-md bg-black/10 flex items-center justify-center ${
+                            isMinimal ? "w-24 h-14" : "w-20 h-12"
+                          }`}>
+                            <img 
+                              src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`} 
+                              alt={video.title}
+                              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                            />
+                            {isActive ? (
+                               <div className="absolute inset-0 bg-indigo-600/40 flex items-center justify-center backdrop-blur-[1px]">
+                                 <FaPlay className="text-white drop-shadow-md" size={14} />
+                               </div>
+                            ) : (
+                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 flex items-center justify-center transition-all">
+                                 <FaPlay className="text-white opacity-0 group-hover:opacity-100 drop-shadow-md" size={14} />
+                               </div>
+                            )}
+                          </div>
+                          
+                          <div className="flex-1 min-w-0 flex flex-col justify-center">
+                            <span className={`text-sm font-medium line-clamp-2 leading-tight ${
                               isActive 
-                                ? "bg-indigo-500/10 text-indigo-400 font-bold" 
-                                : "hover:bg-white/5 text-zinc-400 hover:text-zinc-200"
-                            }`}
-                          >
-                            <Table.Td className="text-center text-xs py-3 border-none w-8">
-                              {String(index + 1).padStart(2, "0")}
-                            </Table.Td>
-                            <Table.Td className="text-left text-xs sm:text-sm py-3 border-none">
-                              <div className="truncate w-full max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-none">
-                                <span className={isActive ? "text-indigo-400" : ""}>{video.title}</span>
-                              </div>
-                            </Table.Td>
+                                ? (isMinimal ? "text-indigo-300" : "text-indigo-700") 
+                                : (isMinimal ? "text-zinc-300 group-hover:text-white" : "text-zinc-700")
+                            }`}>
+                              {video.title}
+                            </span>
                             {!isMinimal && (
-                              <Table.Td className="text-right text-xs py-3 border-none w-16">
-                                {video.length}
-                              </Table.Td>
+                              <span className="text-xs text-zinc-500 mt-0.5">{video.length}</span>
                             )}
-                            {!isMinimal && (
-                              <Table.Td className="text-center w-12 py-3 border-none">
-                                <ActionIcon
-                                  color="red"
-                                  variant="subtle"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (removeVideoFromPlaylist) {
-                                      removeVideoFromPlaylist(video.id, playlist.title);
-                                    }
-                                  }}
-                                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                  title="動画を削除"
-                                >
-                                  <FaTrash size={14} />
-                                </ActionIcon>
-                              </Table.Td>
-                            )}
-                          </Table.Tr>
-                        );
-                      })}
-                  </Table.Tbody>
-                </Table>
+                          </div>
+
+                          {!isMinimal && (
+                             <ActionIcon
+                               color="red"
+                               variant="subtle"
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 if (removeVideoFromPlaylist) {
+                                   removeVideoFromPlaylist(video.id, playlist.title);
+                                 }
+                               }}
+                               className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                               title="動画を削除"
+                             >
+                               <FaTrash size={14} />
+                             </ActionIcon>
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
             </Tabs.Panel>
           ))}

@@ -2,16 +2,50 @@ import usePlayer from "../../../hooks/usePlayer";
 import Player from "../../Molecules/player/player";
 import { FaPlay, FaPause, FaForwardStep, FaBackwardStep, FaVolumeHigh, FaVolumeLow, FaVolumeXmark, FaExpand } from "react-icons/fa6";
 import { useAtomValue } from "jotai";
-import { isPlayingAtom } from "../../../atoms/atoms";
-import { useContext } from "react";
+import { isPlayingAtom, playerAtom } from "../../../atoms/atoms";
+import { useContext, useState, useEffect } from "react";
 import { PlaylistContext } from "../../../context/playlistProvider";
 
 export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
   const { opts, onReady, onEnd, onError, onStateChange, controller, volume, isMuted } = usePlayer();
   const isPlaying = useAtomValue(isPlayingAtom);
+  const player = useAtomValue(playerAtom);
   const { nextVideo, prevVideo, isWorking, workPlaylist, breakPlaylist } = useContext(PlaylistContext);
 
   const currentTitle = isWorking ? workPlaylist.currentVideoTitle : breakPlaylist.currentVideoTitle;
+
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  // シークバー用の時間更新
+  useEffect(() => {
+    let interval;
+    if (isPlaying && player && player.getCurrentTime) {
+      interval = setInterval(() => {
+        setCurrentTime(player.getCurrentTime());
+        setDuration(player.getDuration() || 0);
+      }, 1000);
+    } else if (player && player.getCurrentTime) {
+      setCurrentTime(player.getCurrentTime());
+      setDuration(player.getDuration() || 0);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, player]);
+
+  const handleSeek = (e) => {
+    const newTime = Number(e.target.value);
+    setCurrentTime(newTime);
+    if (player && player.seekTo) {
+      player.seekTo(newTime, true);
+    }
+  };
+
+  const formatTime = (seconds) => {
+    if (!seconds) return "0:00";
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s < 10 ? "0" : ""}${s}`;
+  };
 
   const getVolumeIcon = (size = 16) => {
     if (isMuted || volume === 0) return <FaVolumeXmark size={size} />;
@@ -50,36 +84,73 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
               </div>
             )}
 
-            {/* Title Overlay in Player (Top Left) */}
-            {isPlaying && (
-              <div className="absolute top-0 left-0 right-0 p-8 bg-gradient-to-b from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
-                <h2 className="text-xl font-medium text-white/90 truncate drop-shadow-md">
-                  {currentTitle}
-                </h2>
-              </div>
-            )}
+            {/* Title Overlay in Player (Top Left) - Always visible on hover or paused in cinema mode */}
+            <div className={`absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none z-20 ${isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
+              <h2 className="text-2xl font-bold text-white/95 truncate drop-shadow-lg">
+                {currentTitle || "No Video"}
+              </h2>
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col bg-[#16191e]/80 backdrop-blur-xl border-t border-white/5 relative z-10 p-4">
-          <div className="flex items-center justify-between gap-6 mb-2">
-            <div className="flex-1 hidden md:block">
-               <span className="text-xs text-zinc-500 font-medium uppercase tracking-wider block mb-1">Now Playing</span>
-               <h3 className="text-sm font-semibold text-zinc-200 truncate max-w-xs">{currentTitle}</h3>
+        <div className="flex-none flex flex-col bg-[#16191e]/90 backdrop-blur-xl border-t border-white/10 relative z-10 px-6 py-4">
+          
+          {/* Seek bar row */}
+          <div className="flex items-center gap-4 mb-4 w-full">
+            <span className="text-xs font-medium text-zinc-400 w-10 text-right">{formatTime(currentTime)}</span>
+            <input
+              type="range"
+              min="0"
+              max={duration || 100}
+              value={currentTime}
+              onChange={handleSeek}
+              className="flex-1 h-1.5 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 bg-zinc-700 transition-all"
+              style={{ 
+                WebkitAppearance: "none",
+                background: duration ? `linear-gradient(to right, #6366f1 ${(currentTime / duration) * 100}%, #3f3f46 ${(currentTime / duration) * 100}%)` : '#3f3f46'
+              }}
+            />
+            <span className="text-xs font-medium text-zinc-400 w-10 text-left">{formatTime(duration)}</span>
+          </div>
+
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex-1 flex items-center justify-start gap-3">
+              <button
+                onClick={() => controller({ type: "toggleMute" })}
+                className="text-zinc-400 hover:text-white transition-all rounded-full hover:bg-white/5 p-2"
+                aria-label={isMuted ? "Unmute" : "Mute"}
+              >
+                {getVolumeIcon(20)}
+              </button>
+              
+              <div className="relative w-24 lg:w-32 flex items-center h-full group/volume">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={isMuted ? 0 : volume}
+                  onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
+                  className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 opacity-70 group-hover/volume:opacity-100 transition-all"
+                  style={{ 
+                    WebkitAppearance: "none",
+                    background: `linear-gradient(to right, #6366f1 ${isMuted ? 0 : volume}%, #3f3f46 ${isMuted ? 0 : volume}%)`
+                  }}
+                />
+              </div>
             </div>
 
-            <div className="flex items-center gap-4 flex-1 justify-center">
+            <div className="flex items-center gap-6 flex-1 justify-center">
               <button 
                 onClick={prevVideo}
-                className="text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-full p-3 group"
+                className="text-zinc-400 hover:text-white transition-all hover:bg-white/10 rounded-full p-3 group"
                 aria-label="Previous Video"
               >
-                <FaBackwardStep size={18} className="group-active:scale-90 transition-transform" />
+                <FaBackwardStep size={20} className="group-active:scale-90 transition-transform" />
               </button>
 
               <button
                 onClick={() => controller({ type: "play/pause" })}
-                className="group relative flex items-center justify-center bg-indigo-600 rounded-full shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 w-14 h-14"
+                className="group relative flex items-center justify-center bg-indigo-600 rounded-full shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 w-14 h-14"
                 aria-label={isPlaying ? "Pause" : "Play"}
               >
                 <div className="absolute inset-0 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -92,36 +163,15 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode }) {
 
               <button 
                 onClick={nextVideo}
-                className="text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-full p-3 group"
+                className="text-zinc-400 hover:text-white transition-all hover:bg-white/10 rounded-full p-3 group"
                 aria-label="Next Video"
               >
-                <FaForwardStep size={18} className="group-active:scale-90 transition-transform" />
+                <FaForwardStep size={20} className="group-active:scale-90 transition-transform" />
               </button>
             </div>
 
-            <div className="flex items-center gap-3 flex-1 justify-end">
-              <button
-                onClick={() => controller({ type: "toggleMute" })}
-                className="text-zinc-400 hover:text-white transition-all rounded-full hover:bg-white/5 p-2"
-                aria-label={isMuted ? "Unmute" : "Mute"}
-              >
-                {getVolumeIcon(18)}
-              </button>
-              
-              <div className="relative w-24 lg:w-32 flex items-center h-full">
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={isMuted ? 0 : volume}
-                  onChange={(e) => controller({ type: "setVolume", payload: Number(e.target.value) })}
-                  className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400 transition-all"
-                  style={{ 
-                    WebkitAppearance: "none",
-                    background: `linear-gradient(to right, #6366f1 ${isMuted ? 0 : volume}%, #3f3f46 ${isMuted ? 0 : volume}%)`
-                  }}
-                />
-              </div>
+            <div className="flex-1 flex justify-end">
+                {/* プレースホルダー（右側のバランスをとるため） */}
             </div>
           </div>
         </div>

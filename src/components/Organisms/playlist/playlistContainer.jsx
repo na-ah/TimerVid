@@ -3,13 +3,13 @@ import PlaylistTabs from "../../Molecules/playlist/playlistTabs";
 import { PlaylistContext } from "../../../context/playlistProvider";
 import PlaylistInfo from "../../Molecules/playlist/playlistInfo";
 import PlaylistAddVideoModal from "../../Molecules/playlist/playlistAddVideoModal";
-import { Tabs, ActionIcon, Tooltip, Group, Button, Modal } from "@mantine/core";
+import { Tabs, ActionIcon, Tooltip, Group, Button, Modal, Text, ThemeIcon } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { GoArrowSwitch } from "react-icons/go";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
 import { TbPlayerTrackPrevFilled } from "react-icons/tb";
 import PlaylistAddVideoListModal from "../../Molecules/playlist/playlistAddVideoListModal";
-import { FaPlus, FaExpand, FaCompress, FaList } from "react-icons/fa6";
+import { FaPlus, FaExpand, FaCompress, FaList, FaPlay } from "react-icons/fa6";
 import PlaylistAddModal from "../../Molecules/playlist/playlistAddModal";
 import PlaylistSearchModal from "../../Molecules/playlist/playlistSearchModal";
 
@@ -32,25 +32,60 @@ export default function PlaylistContainer({ children, isCinemaMode, setIsCinemaM
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="プレイリスト選択" centered scrollAreaComponent={false}>
-        <div className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto p-1">
-          {activeContext.playlists.map((pl, i) => (
-            <Button 
-              key={i}
-              variant={activeContext.activePlaylist === pl.title ? "filled" : "light"} 
-              onClick={() => { 
-                changeSubPlaylist(pl.title, selectedPlaylist);
-                close(); 
-              }}
-              fullWidth
-              className="justify-start h-auto py-3 flex-shrink-0 min-h-[60px]"
-            >
-              <div className="flex flex-col items-start truncate w-full">
-                <span className="font-bold text-sm truncate w-full text-left">{pl.title}</span>
-                <span className="text-xs opacity-70">{pl.videoIds.length} videos</span>
-              </div>
-            </Button>
-          ))}
+      <Modal 
+        opened={opened} 
+        onClose={close} 
+        title={<span className="font-bold text-xl text-zinc-800">プレイリストを選択</span>} 
+        centered 
+        size="lg"
+        overlayProps={{ blur: 4, color: "#0f1115", opacity: 0.6 }}
+        radius="lg"
+        padding="xl"
+      >
+        <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
+          {activeContext.playlists.map((pl, i) => {
+            const isActive = activeContext.activePlaylist === pl.title;
+            return (
+              <button
+                key={i}
+                onClick={() => { 
+                  changeSubPlaylist(pl.title, selectedPlaylist);
+                  close(); 
+                }}
+                className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 border text-left
+                  ${isActive 
+                    ? "bg-indigo-50 border-indigo-200 shadow-sm" 
+                    : "bg-white border-zinc-200 hover:border-indigo-300 hover:bg-zinc-50 hover:shadow-md"
+                  }
+                `}
+              >
+                <ThemeIcon 
+                  size="xl" 
+                  radius="md" 
+                  variant={isActive ? "filled" : "light"} 
+                  color={isActive ? "indigo" : "gray"}
+                  className="shrink-0"
+                >
+                  {isActive ? <FaPlay size={14} /> : <FaList size={16} />}
+                </ThemeIcon>
+                
+                <div className="flex flex-col flex-1 min-w-0">
+                  <Text size="md" weight={700} className={`truncate ${isActive ? "text-indigo-900" : "text-zinc-800"}`}>
+                    {pl.title}
+                  </Text>
+                  <Text size="sm" className={isActive ? "text-indigo-600/80" : "text-zinc-500"}>
+                    {pl.videoIds.length} 本の動画
+                  </Text>
+                </div>
+
+                {isActive && (
+                  <span className="text-xs font-bold text-indigo-500 bg-indigo-100 px-2 py-1 rounded-md shrink-0">
+                    再生中
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </Modal>
 
