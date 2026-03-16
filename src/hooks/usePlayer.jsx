@@ -1,13 +1,14 @@
 import { useContext, useEffect, useReducer, useState, useRef } from "react";
 import { PlaylistContext } from "../context/playlistProvider";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { playerAtom, resumeTimeAtom, isPlayingAtom } from "../atoms/atoms";
+import { playerAtom, resumeTimeAtom, isPlayingAtom, isRepeatOneAtom } from "../atoms/atoms";
 
 export default function usePlayer() {
   const setPlayer = useSetAtom(playerAtom);
   const player = useAtomValue(playerAtom);
   const [resumeTime] = useAtom(resumeTimeAtom);
   const [isPlaying, setIsPlaying] = useAtom(isPlayingAtom);
+  const isRepeatOne = useAtomValue(isRepeatOneAtom);
   const { currentVideoId, nextVideo } = useContext(PlaylistContext);
   const [retryCount, setRetryCount] = useState(0);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
@@ -19,6 +20,11 @@ export default function usePlayer() {
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
+
+  const isRepeatOneRef = useRef(isRepeatOne);
+  useEffect(() => {
+    isRepeatOneRef.current = isRepeatOne;
+  }, [isRepeatOne]);
 
   const reducer = (currentPlayer, action) => {
     switch (action.type) {
@@ -145,7 +151,16 @@ export default function usePlayer() {
 
   const onEnd = () => {
     setRetryCount(0);
-    nextVideo();
+    if (isRepeatOneRef.current) {
+      if (player && currentVideoId) {
+        player.loadVideoById({
+          videoId: currentVideoId,
+          startSeconds: 0,
+        });
+      }
+    } else {
+      nextVideo();
+    }
     setTimeout(() => {
       controller({ type: "play" });
     }, 100);

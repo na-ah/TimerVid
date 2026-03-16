@@ -1,8 +1,8 @@
 import usePlayer from "../../../hooks/usePlayer";
 import Player from "../../Molecules/player/player";
-import { FaPlay, FaPause, FaForwardStep, FaBackwardStep, FaVolumeHigh, FaVolumeLow, FaVolumeXmark, FaExpand, FaCompress } from "react-icons/fa6";
-import { useAtomValue } from "jotai";
-import { isPlayingAtom, playerAtom } from "../../../atoms/atoms";
+import { FaPlay, FaPause, FaForwardStep, FaBackwardStep, FaVolumeHigh, FaVolumeLow, FaVolumeXmark, FaExpand, FaCompress, FaRepeat } from "react-icons/fa6";
+import { useAtomValue, useAtom } from "jotai";
+import { isPlayingAtom, playerAtom, isRepeatOneAtom } from "../../../atoms/atoms";
 import { useContext, useState, useEffect } from "react";
 import { PlaylistContext } from "../../../context/playlistProvider";
 
@@ -10,6 +10,7 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode, isAmbie
   const { opts, onReady, onEnd, onError, onStateChange, controller, volume, isMuted } = usePlayer();
   const isPlaying = useAtomValue(isPlayingAtom);
   const player = useAtomValue(playerAtom);
+  const [isRepeatOne, setIsRepeatOne] = useAtom(isRepeatOneAtom);
   const { nextVideo, prevVideo, isWorking, workPlaylist, breakPlaylist } = useContext(PlaylistContext);
 
   const currentTitle = isWorking ? workPlaylist.currentVideoTitle : breakPlaylist.currentVideoTitle;
@@ -170,6 +171,14 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode, isAmbie
                   >
                     <FaForwardStep size={24} className="group-active:scale-90 transition-transform" />
                   </button>
+
+                  <button 
+                    onClick={() => setIsRepeatOne(!isRepeatOne)}
+                    className={`${isRepeatOne ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)] bg-white/5" : "text-zinc-300 hover:text-white hover:bg-white/10"} transition-all rounded-full p-4 group`}
+                    aria-label={isRepeatOne ? "Disable Repeat One" : "Enable Repeat One"}
+                  >
+                    <FaRepeat size={20} className="group-active:scale-90 transition-transform" />
+                  </button>
                 </div>
                 
                 <div className="flex-1 flex justify-end">
@@ -289,6 +298,14 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode, isAmbie
               >
                 <FaForwardStep size={20} className="group-active:scale-90 transition-transform" />
               </button>
+
+              <button 
+                onClick={() => setIsRepeatOne(!isRepeatOne)}
+                className={`${isRepeatOne ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)] bg-white/5" : "text-zinc-400 hover:text-white hover:bg-white/10"} transition-all rounded-full p-3 group`}
+                aria-label={isRepeatOne ? "Disable Repeat One" : "Enable Repeat One"}
+              >
+                <FaRepeat size={18} className="group-active:scale-90 transition-transform" />
+              </button>
             </div>
 
             <div className="flex-1 flex justify-end">
@@ -335,6 +352,14 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode, isAmbie
                 className="text-zinc-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"
               >
                 <FaForwardStep size={14} />
+              </button>
+              
+              <button 
+                onClick={() => setIsRepeatOne(!isRepeatOne)}
+                className={`${isRepeatOne ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)] bg-white/5" : "text-zinc-400 hover:text-white hover:bg-white/10"} p-1.5 rounded-full transition-colors`}
+                aria-label={isRepeatOne ? "Disable Repeat One" : "Enable Repeat One"}
+              >
+                <FaRepeat size={14} />
               </button>
             </div>
 
