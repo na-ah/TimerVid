@@ -2,8 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import useTimer from "../hooks/useTimer";
 import { PlaylistContext } from "./playlistProvider";
 import useSound from "use-sound";
-import countdownSfx from "../assets/countdown.mp3";
-import fanfareSfx from "../assets/fanfare.mp3";
 import { useAtomValue } from "jotai";
 import { playerAtom } from "../atoms/atoms";
 import usePlayer from "@/hooks/usePlayer";
@@ -23,8 +21,8 @@ export default function TimerProvider({ children }) {
   const [totalCycle, setTotalCycle] = useState(4);
   const [totalCycleCount, setTotalCycleCount] = useState(1);
   const countdownSoundDelay = 5000;
-  const [countdownSound] = useSound(countdownSfx, { volume: 4.0 });
-  const [fanfareSound] = useSound(fanfareSfx, { volume: 1.0 });
+  const [countdownSound] = useSound("/countdown.mp3", { volume: 4.0 });
+  const [fanfareSound] = useSound("/fanfare.mp3", { volume: 1.0 });
 
   let isFinished = false;
 
