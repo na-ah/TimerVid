@@ -7,7 +7,7 @@ import { useContext, useState, useEffect } from "react";
 import { PlaylistContext } from "../../../context/playlistProvider";
 
 export default function PlayerContainer({ isCinemaMode, setIsCinemaMode, isAmbientMode, setIsAmbientMode }) {
-  const { opts, onReady, onEnd, onError, onStateChange, controller, volume, isMuted } = usePlayer();
+  const { opts, onReady, onEnd, onError, onStateChange, controller, volume, isMuted, iframeKey } = usePlayer();
   const isPlaying = useAtomValue(isPlayingAtom);
   const player = useAtomValue(playerAtom);
   const [isRepeatOne, setIsRepeatOne] = useAtom(isRepeatOneAtom);
@@ -60,6 +60,7 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode, isAmbie
           {/* Full Screen Video */}
           <div className="absolute inset-0 w-full h-full flex items-center justify-center relative [&>div]:w-full [&>div]:h-full [&>div>iframe]:w-full [&>div>iframe]:h-full pointer-events-auto">
             <Player
+              iframeKey={iframeKey}
               opts={{...opts, playerVars: { ...opts.playerVars, controls: 0 }}}
               onReady={onReady}
               onEnd={onEnd}
@@ -198,6 +199,7 @@ export default function PlayerContainer({ isCinemaMode, setIsCinemaMode, isAmbie
           
           <div className={`w-full h-full ${isCinemaMode ? "flex items-center justify-center relative [&>div]:w-full [&>div]:h-full [&>div>iframe]:w-full [&>div>iframe]:h-full" : ""}`}>
             <Player
+              iframeKey={iframeKey}
               opts={opts}
               onReady={onReady}
               onEnd={onEnd}

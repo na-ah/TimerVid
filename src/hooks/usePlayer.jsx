@@ -14,6 +14,7 @@ export default function usePlayer() {
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [volume, setVolumeState] = useState(50);
   const [isMuted, setIsMutedState] = useState(false);
+  const [iframeKey, setIframeKey] = useState(0);
   
   // Ref to hold the current intended playing state so we can access it inside onStateChange without causing re-renders
   const isPlayingRef = useRef(isPlaying);
@@ -151,6 +152,33 @@ export default function usePlayer() {
 
   const onEnd = () => {
     setRetryCount(0);
+
+    // Distinguish between true end-of-video and mid-video forced stop by YouTube.
+    // If the player reports we ended far from the actual duration, treat it as a
+    // forced stop and resume from the same position instead of advancing.
+    let resumedMidway = false;
+    if (player && currentVideoId) {
+      try {
+        const dur = player.getDuration ? player.getDuration() : 0;
+        const cur = player.getCurrentTime ? player.getCurrentTime() : 0;
+        if (dur > 0 && dur - cur > 30) {
+          console.warn(`Video ended prematurely (${cur}/${dur}). Resuming same video.`);
+          player.loadVideoById({
+            videoId: currentVideoId,
+            startSeconds: Math.max(0, cur - 2),
+          });
+          resumedMidway = true;
+        }
+      } catch (e) {
+        console.warn("onEnd duration check failed:", e);
+      }
+    }
+
+    if (resumedMidway) {
+      setTimeout(() => controller({ type: "play" }), 100);
+      return;
+    }
+
     if (isRepeatOneRef.current) {
       if (player && currentVideoId) {
         player.loadVideoById({
@@ -252,6 +280,78 @@ export default function usePlayer() {
     }
   };
 
+  // Health monitor: detect playback that has silently stalled even though
+  // the player still reports PLAYING (or no state event ever arrived).
+  // Recovery escalates: playVideo -> loadVideoById -> remount iframe.
+  const lastTimeRef = useRef(0);
+  const stallCountRef = useRef(0);
+  useEffect(() => {
+    if (!isPlayerReady || !player) return;
+    const interval = setInterval(() => {
+      if (!isPlayingRef.current) {
+        stallCountRef.current = 0;
+        return;
+      }
+      let cur = 0;
+      let state = -99;
+      try {
+        cur = player.getCurrentTime ? player.getCurrentTime() : 0;
+        state = player.getPlayerState ? player.getPlayerState() : -99;
+      } catch (e) {
+        console.warn("Health check read failed:", e);
+        return;
+      }
+
+      const advanced = cur > lastTimeRef.current + 0.1;
+      lastTimeRef.current = cur;
+
+      // Buffering for too long, or paused while we want to play, or no progress
+      // while reportedly playing -> escalate recovery.
+      const stalled =
+        (!advanced && state === 1) ||
+        state === 2 ||
+        state === 3;
+
+      if (!stalled) {
+        stallCountRef.current = 0;
+        return;
+      }
+
+      stallCountRef.current += 1;
+      const stalledFor = stallCountRef.current * 5; // seconds
+      console.warn(`Playback stall detected (state=${state}, t=${cur}, count=${stallCountRef.current})`);
+
+      try {
+        if (stalledFor <= 10) {
+          player.playVideo();
+        } else if (stalledFor <= 20) {
+          const videoData = player.getVideoData ? player.getVideoData() : null;
+          const vidId = (videoData && videoData.video_id) ? videoData.video_id : currentVideoId;
+          player.loadVideoById({
+            videoId: vidId,
+            startSeconds: Math.max(0, cur - 2),
+          });
+        } else {
+          console.warn("Remounting YouTube iframe as last resort");
+          setIframeKey((k) => k + 1);
+          stallCountRef.current = 0;
+        }
+      } catch (e) {
+        console.warn("Stall recovery failed:", e);
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isPlayerReady, player, currentVideoId]);
+
+  // After an iframe remount, the new player will fire onReady and load
+  // currentVideoId from scratch. Reset state so health monitor doesn't
+  // immediately escalate again.
+  useEffect(() => {
+    lastTimeRef.current = 0;
+    stallCountRef.current = 0;
+    setIsPlayerReady(false);
+  }, [iframeKey]);
+
   const opts = {
     height: "100%",
     width: "100%",
@@ -271,5 +371,6 @@ export default function usePlayer() {
     isPlayerReady,
     volume,
     isMuted,
+    iframeKey,
   };
 }
